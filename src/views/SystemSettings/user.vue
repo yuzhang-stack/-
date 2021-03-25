@@ -1235,6 +1235,10 @@
             if (response.status == 'success') {
               let doctorList = response.data.doctorList
               // npm run build
+              for (let i = 0; i < doctorList.length; i++) {
+                doctorList[i].isChecked = false
+              }
+              this.checked = false;
               this.doctorList = doctorList
               this.doctorIdList = [];
               this.marketListTap('')

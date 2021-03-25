@@ -131,6 +131,7 @@ export const constantRoutes = [
  * 需要根据用户角色动态加载的路由
  */
 export const asyncRoutes = [
+
   // {
   //   path: '/permission',
   //   component: Layout,
@@ -182,14 +183,14 @@ export const asyncRoutes = [
       icon: 'peoples'
     },
     children: [
-      {
-        // path: 'edit/:id(\\d+)',
-        path: '/ThreeParties',
-        component: () => import('@/views/meeting/ThreeParties'),
-        name: '三方会管理',
-        meta: { title: '三方会管理',},
-
-      },
+      // {
+      //   // path: 'edit/:id(\\d+)',
+      //   path: '/ThreeParties',
+      //   component: () => import('@/views/meeting/ThreeParties'),
+      //   name: '三方会管理',
+      //   meta: { title: '三方会管理',},
+      //
+      // },
       // {
       //   path: '/SelfParties',
       //   component: () => import('@/views/meeting/SelfParties'),
@@ -213,8 +214,22 @@ export const asyncRoutes = [
         // path: 'edit/:id(\\d+)',
         path: '/video',
         component: () => import('@/views/meeting/video'),
-        name: '视频库管理',
-        meta: { title: '视频库管理',  },
+        name: '回播管理',
+        meta: { title: '回播管理',  },
+      },
+      // {
+      //   // path: 'edit/:id(\\d+)',
+      //   path: '/wonderful',
+      //   component: () => import('@/views/meeting/wonderful'),
+      //   name: '精彩集锦',
+      //   meta: { title: '精彩集锦',  },
+      // },
+      {
+        path: '/ToView',
+        component: () => import('@/views/meeting/ToView'),
+        name: '观看列表',
+        meta: { title: '观看列表' },
+        hidden:true,
       },
 
     ]

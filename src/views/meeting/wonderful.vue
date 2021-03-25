@@ -23,19 +23,6 @@
             :style="'width:100%;'"
             @click.native="indicatTap(index)"></el-option>
         </el-select>
-
-        <el-select style="margin-left: 1%;width: 8%" v-model="liveStatus" filterable @clear="liveStatusNull" clearable
-                   placeholder="状态查询" @change="">
-
-          <el-option
-            v-for="(item,index) in liveStatusList"
-            :key="item"
-            :label="item"
-            :value="item"
-            :style="'width:100%;'"
-            @click.native="liveStatusTap(index)"></el-option>
-        </el-select>
-
         <el-date-picker
           v-model="liveDateBegin"
           type="date"
@@ -126,7 +113,7 @@
       </el-table-column>
       <el-table-column
         prop="liveUrl"
-        label="拉流地址"
+        label="视频地址"
         align="center"
         width="150">
       </el-table-column>
@@ -136,18 +123,10 @@
         align="center"
         width="150">
         <template slot-scope="scope">
-<!--          <el-button size="mini" type="primary" plain @click="LookEditDialog(scope.row,1)">查看</el-button>-->
           <el-button size="mini" type="primary" plain @click="LookEditDialog(scope.row,1)">查看</el-button>
-
+          <!--          <el-button size="mini" type="primary" plain @click="showEditDialog(scope.row,1)">编辑</el-button>-->
         </template>
       </el-table-column>
-      <el-table-column
-        prop="liveStatus"
-        label="状态"
-        align="center"
-        width="120">
-      </el-table-column>
-
 
 
       <el-table-column label="操作" align="center">
@@ -224,8 +203,35 @@
         <el-form-item label="发起人" prop="initiator">
           <el-input v-model="addForm.initiator" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="拉流地址" prop="initiator">
-          <el-input v-model="addForm.liveUrl" auto-complete="off"></el-input>
+        <!--        {FoldPath:'上传目录',SecretKey:'安全验证'}-->
+        <el-form-item label="视频地址" prop="initiator">
+          <div>{{addForm.liveUrl}}</div>
+
+          <el-upload class="avatar-uploader"
+                     :action="videoUrl"
+                     v-bind:data="{}"
+                     v-bind:on-progress="uploadVideoProcess"
+                     v-bind:on-success="handleVideoSuccess"
+                     v-bind:before-upload="beforeUploadVideo"
+                     accept=".mp4"
+                     v-bind:show-file-list="false">
+            <video v-if="videoForm.showVideoPath !='' && !videoFlag"
+                   v-bind:src="videoForm.showVideoPath"
+                   class="avatar video-avatar"
+                   controls="controls">
+              您的浏览器不支持视频播放
+            </video>
+            <!--            <i>{{addForm.liveUrl}}</i>-->
+
+            <!--            <i class="el-icon-plus avatar-uploader-icon">上传视频</i>-->
+            <el-button v-else-if="videoForm.showVideoPath =='' && !videoFlag" type="primary">上传视频</el-button>
+            <el-progress v-if="videoFlag == true"
+                         type="circle"
+                         v-bind:percentage="videoUploadPercent"
+                         style="margin-top:7px;"></el-progress>
+          </el-upload>
+          <div style="font-size: 12px;color: #999;">单个视频上传大小不可超过50M，且只能上传一个视频</div>
+
         </el-form-item>
         <el-form-item label="直播海报" prop="initiator">
           <el-upload
@@ -309,7 +315,7 @@
       </div>
     </el-dialog>
     <!-- 编辑用户对话框 -->
-    <el-dialog title="编辑会议" :visible.sync="editDialogFormVisible" @close='editDialogFormVisibleTap'>
+    <el-dialog title="编辑会议" :visible.sync="editDialogFormVisible" @close='editDialogFormVisibleTap' >
       <el-form :model="addForm" style="width: 100%;overflow:auto;height: 550px;" label-width="80px" ref="addUserForm">
         <el-form-item label="会议名称" prop="liveName">
           <el-input v-model="addForm.liveName" auto-complete="off"></el-input>
@@ -362,8 +368,34 @@
         <el-form-item label="发起人" prop="initiator">
           <el-input v-model="addForm.initiator" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="拉流地址" prop="initiator">
-          <el-input v-model="addForm.liveUrl" auto-complete="off"></el-input>
+        <el-form-item label="视频地址" prop="initiator">
+          <div>{{addForm.liveUrl}}</div>
+
+          <el-upload class="avatar-uploader"
+                     :action="videoUrl"
+                     v-bind:data="{}"
+                     v-bind:on-progress="uploadVideoProcess"
+                     v-bind:on-success="handleVideoSuccess"
+                     v-bind:before-upload="beforeUploadVideo"
+                     accept=".mp4"
+                     v-bind:show-file-list="false">
+            <video v-if="videoForm.showVideoPath !='' && !videoFlag"
+                   v-bind:src="videoForm.showVideoPath"
+                   class="avatar video-avatar"
+                   controls="controls">
+              您的浏览器不支持视频播放
+            </video>
+            <!--            <i>{{addForm.liveUrl}}</i>-->
+
+            <!--            <i class="el-icon-plus avatar-uploader-icon">上传视频</i>-->
+            <el-button v-else-if="videoForm.showVideoPath =='' && !videoFlag" type="primary">上传视频</el-button>
+            <el-progress v-if="videoFlag == true"
+                         type="circle"
+                         v-bind:percentage="videoUploadPercent"
+                         style="margin-top:7px;"></el-progress>
+          </el-upload>
+          <div style="font-size: 12px;color: #999;">单个视频上传大小不可超过50M，且只能上传一个视频</div>
+
         </el-form-item>
         <el-form-item label="直播海报" prop="initiator">
           <el-upload
@@ -536,6 +568,20 @@
     data() {
       let that = this;
       return {
+        videoUrl:'https://yifang.insightin.cn/web/v1.0/conference/live/video-upload',//上传视频
+
+
+        videoFlag: false,
+        //是否显示进度条
+        videoUploadPercent: "",
+        //进度条的进度，
+        isShowUploadVideo: false,
+        //显示上传按钮layer
+        videoForm: {
+          showVideoPath: ''
+        },
+
+
         liveViewList:[],//直播观看人数列表
         // "http://yifang.insightin.cn/live_img/poster/1615184721566/4fc3222f0ef00c0a1e08794ef682abc.jpg"
         posterImageUrlArray: [],
@@ -640,7 +686,7 @@
 
     },
     watch: {
-      "userListData.liveName"() {
+      "userListData.lecturer"() {
         delay(() => {
           this.userListData.currentPage = 1
           this.initList();
@@ -652,7 +698,7 @@
           this.initList();
         }, 500);
       },
-      "userListData.lecturer"() {
+      "userListData.liveName"() {
         delay(() => {
           this.userListData.currentPage = 1
           this.initList();
@@ -696,6 +742,49 @@
       this.thirdTap()//演讲人
     },
     methods: {
+      //上传前回调
+      beforeUploadVideo(file) {
+        // var fileSize = file.size / 1024 / 1024 < 50;
+        // if (['video/mp4', 'video/ogg', 'video/flv', 'video/avi', 'video/wmv', 'video/rmvb', 'video/mov'].indexOf(file.type) == -1) {
+        //   layer.msg("请上传正确的视频格式");
+        //   return false;
+        // }
+        // if (!fileSize) {
+        //   layer.msg("视频大小不能超过50MB");
+        //   return false;
+        // }
+        this.isShowUploadVideo = false;
+      },
+      //进度条
+      uploadVideoProcess(event, file, fileList) {
+        this.videoFlag = true;
+        this.videoUploadPercent = file.percentage.toFixed(0) * 1;
+      },
+      //上传成功回调
+      handleVideoSuccess(file) {
+        this.isShowUploadVideo = true;
+        this.videoFlag = false;
+        this.videoUploadPercent = 0;
+        if (file.code == '200') {
+          if (file.status == 'success') {
+            this.addForm.liveUrl = file.data.fileFullPath;
+            console.log('fileFullPath=',file.data.fileFullPath);
+
+          } else {
+            this.$message({
+              message: file.message,
+              type: 'error'
+            })
+          }
+        } else {
+          this.$message({
+            message: file.message,
+            type: 'error'
+          })
+        }
+
+      },
+
       // 导出
       ExportListTap() {
         this.handleDownload(this.liveViewList);
@@ -1216,7 +1305,7 @@
         userListData = this.userListData
 
         console.log('userListData=', userListData)
-        let url = '/web/v1.0/conference/live/live-page'
+        let url = '/web/v1.0/conference/live/highlights-page'
         api.get(url, userListData).then(response => {
           // console.log('返回值!', response.data.userList.item)
           this.loading = false
@@ -1282,7 +1371,7 @@
         }
 
         if (!this.addForm.liveUrl) {
-          this.$message('请填写拉流地址');
+          this.$message('请上传视频地址');
           return
         }
 
@@ -1324,7 +1413,7 @@
         };
 
         console.log('userListData=', userListData)
-        let url = '/web/v1.0/conference/live/live-save'
+        let url = '/web/v1.0/conference/live/highlights-save'
         api.postn(url, {}, userListData).then(response => {
           console.log('response=', response)
           this.loading = false
@@ -1430,15 +1519,40 @@
       // 显示查看
       LookEditDialog(row, type) {
         console.log(row)
-        // 跳转至订单列表页面传参
         this.$router.push({
           path: '/ToView',
           query: {
             id: row.liveId,
           }
         }) // 带参跳转
-
-
+        // this.LookDialogFormVisible = true
+        // this.loading = true
+        //
+        // let userListData = {
+        //   liveId: row.liveId
+        // }
+        // let url = '/web/v1.0/conference/live/live-view-page'
+        // api.get(url, userListData).then(response => {
+        //   console.log('信息!', response)
+        //   this.loading = false
+        //   if (response.code == '200') {
+        //     if (response.status == 'success') {
+        //       this.liveViewList = response.data.liveViewList
+        //     } else {
+        //       this.$message({
+        //         message: response.message,
+        //         type: 'error'
+        //       })
+        //     }
+        //   } else {
+        //     this.$message({
+        //       message: response.message,
+        //       type: 'error'
+        //     })
+        //   }
+        //
+        // }).catch(error => {
+        // })
       },
       // 显示编辑用户对话框
       showEditDialog(row, type) {
