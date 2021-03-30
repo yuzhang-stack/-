@@ -174,6 +174,32 @@ export const asyncRoutes = [
   //   ]
   // },
   {
+    path: '/academic',
+    component: Layout,
+    redirect: '/academic',
+    name: 'academic',
+    meta: {
+      title: '学术管理',
+      icon: 'el-icon-s-shop'
+    },
+    children: [
+      {
+        // path: 'edit/:id(\\d+)',
+        path: '/Static',
+        component: () => import('@/views/academic/Static'),
+        name: '静态EDA管理',
+        meta: { title: '静态EDA管理',  },
+      },
+      {
+        // path: 'edit/:id(\\d+)',
+        path: '/Dynamic',
+        component: () => import('@/views/academic/Dynamic'),
+        name: '动态EDA管理',
+        meta: { title: '动态EDA管理',  },
+      },
+    ]
+  },
+  {
     path: '/meeting',
     component: Layout,
     redirect: '/meeting',
@@ -183,14 +209,14 @@ export const asyncRoutes = [
       icon: 'peoples'
     },
     children: [
-      // {
-      //   // path: 'edit/:id(\\d+)',
-      //   path: '/ThreeParties',
-      //   component: () => import('@/views/meeting/ThreeParties'),
-      //   name: '三方会管理',
-      //   meta: { title: '三方会管理',},
-      //
-      // },
+      {
+        // path: 'edit/:id(\\d+)',
+        path: '/ThreeParties',
+        component: () => import('@/views/meeting/ThreeParties'),
+        name: '三方会管理',
+        meta: { title: '三方会管理',},
+
+      },
       // {
       //   path: '/SelfParties',
       //   component: () => import('@/views/meeting/SelfParties'),
@@ -217,13 +243,13 @@ export const asyncRoutes = [
         name: '回播管理',
         meta: { title: '回播管理',  },
       },
-      // {
-      //   // path: 'edit/:id(\\d+)',
-      //   path: '/wonderful',
-      //   component: () => import('@/views/meeting/wonderful'),
-      //   name: '精彩集锦',
-      //   meta: { title: '精彩集锦',  },
-      // },
+      {
+        // path: 'edit/:id(\\d+)',
+        path: '/wonderful',
+        component: () => import('@/views/meeting/wonderful'),
+        name: '精彩集锦',
+        meta: { title: '精彩集锦',  },
+      },
       {
         path: '/ToView',
         component: () => import('@/views/meeting/ToView'),
