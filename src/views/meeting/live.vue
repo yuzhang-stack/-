@@ -545,15 +545,15 @@
         dialogImageUrl: '',
         dialogVisible: false,
         headers:{},
-        poster:'https://yifang.insightin.cn/web/v1.0/conference/live/live-img-upload-insert?imgType=poster',//海报
-        cover:'https://yifang.insightin.cn/web/v1.0/conference/live/live-img-upload-insert?imgType=cover',//封面
-        meet:'https://yifang.insightin.cn/web/v1.0/conference/live/live-img-upload-insert?imgType=info ',//会议介绍
-        expert:'https://yifang.insightin.cn/web/v1.0/conference/live/live-img-upload-insert?imgType=lecturer ',//专家介绍
+        poster:'https://yifangweb.insightin.cn/web/v1.0/conference/live/live-img-upload-insert?imgType=poster',//海报
+        cover:'https://yifangweb.insightin.cn/web/v1.0/conference/live/live-img-upload-insert?imgType=cover',//封面
+        meet:'https://yifangweb.insightin.cn/web/v1.0/conference/live/live-img-upload-insert?imgType=info ',//会议介绍
+        expert:'https://yifangweb.insightin.cn/web/v1.0/conference/live/live-img-upload-insert?imgType=lecturer ',//专家介绍
 
-        posterEdit:'https://yifang.insightin.cn/web/v1.0/conference/live/live-img-upload-edit?imgType=poster',//海报
-        coverEdit:'https://yifang.insightin.cn/web/v1.0/conference/live/live-img-upload-edit?imgType=cover',//海报
-        meetEdit:'https://yifang.insightin.cn/web/v1.0/conference/live/live-img-upload-edit?imgType=info',//海报
-        expertEdit:'https://yifang.insightin.cn/web/v1.0/conference/live/live-img-upload-edit?imgType=lecturer',//海报
+        posterEdit:'https://yifangweb.insightin.cn/web/v1.0/conference/live/live-img-upload-edit?imgType=poster',//海报
+        coverEdit:'https://yifangweb.insightin.cn/web/v1.0/conference/live/live-img-upload-edit?imgType=cover',//海报
+        meetEdit:'https://yifangweb.insightin.cn/web/v1.0/conference/live/live-img-upload-edit?imgType=info',//海报
+        expertEdit:'https://yifangweb.insightin.cn/web/v1.0/conference/live/live-img-upload-edit?imgType=lecturer',//海报
         posterEd:'',//上传图片带参
         // 会议日程
         details : [

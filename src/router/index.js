@@ -197,6 +197,13 @@ export const asyncRoutes = [
         name: '动态EDA管理',
         meta: { title: '动态EDA管理',  },
       },
+      {
+        // path: 'edit/:id(\\d+)',
+        path: '/academic',
+        component: () => import('@/views/academic/academic'),
+        name: '学术幻灯管理',
+        meta: { title: '学术幻灯管理',  },
+      },
     ]
   },
   {

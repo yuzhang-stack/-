@@ -52,21 +52,21 @@
       </el-table-column>
       <el-table-column
         prop="articleTitle"
-        label="静态EDA标题"
+        label="学术标题"
         align="center"
-        width="300">
+        width="500">
       </el-table-column>
       <el-table-column
         prop="indication"
         label="适应症"
         align="center"
-        width="80">
+        width="200">
       </el-table-column>
       <el-table-column
         prop="department"
         label="启用状态"
         align="center"
-        width="120">
+        width="200">
         <template slot-scope="scope">
           <el-switch v-model="scope.row.status" @change="changeUserState(scope.row)"></el-switch>
         </template>
@@ -75,16 +75,8 @@
         prop="articleDate"
         label="上传时间"
         align="center"
-        width="150">
+        width="400">
       </el-table-column>
-      <el-table-column
-        prop="talkSkillContent"
-        label="拜访话术"
-        align="center"
-        width="750">
-      </el-table-column>
-
-
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" plain @click="showEditDialog(scope.row,1)">编辑</el-button>
@@ -106,8 +98,8 @@
       </el-pagination>
     </div>
     <!--创建会议对话框:-->
-    <el-dialog  title="创建静态EDA" :visible.sync="addDialogFormVisible" @close="addDialogFormVisibleTap">
-      <el-form :model="addForm" style="width: 100%;overflow:auto;height: 550px;" label-width="80px" ref="addUserForm">
+    <el-dialog  title="创建幻灯" :visible.sync="addDialogFormVisible" @close="addDialogFormVisibleTap">
+      <el-form :model="addForm" style=" width: 100%;overflow:auto;height: 550px;" label-width="80px" ref="addUserForm">
         <el-form-item label="标题" prop="liveName">
           <el-input v-model="addForm.articleTitle" auto-complete="off"></el-input>
         </el-form-item>
@@ -122,126 +114,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="拜访话术" prop="liveOrg">
-          <el-input rows="4"  type="textarea" v-model="addForm.talkSkillContent" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="文章内容" prop="initiator">
-          <el-upload
-            :action="academic"
-            list-type="picture-card"
-            :on-preview="contentPreview"
-            :on-success="contentSuccess"
-            :on-exceed="contentExceed"
-            :limit='100'
-            :multiple="false"
-            accept=".jpg, .png"
-            :file-list="contentImageUrlArray"
-            :on-remove="contentRemove">
-            <div class="lin">上传文章</div>
-          </el-upload>
-<!--          <div style="font-size: 12px;color: #999;">上传大小不可超过5M，且只能上传一张（宽高比例：4:3）</div>-->
-          <el-dialog :append-to-body="true" style="z-index: 10000!important;" :visible.sync="dialogVisible">
-            <img width="100%" :src="dialogImageUrl" alt="">
-          </el-dialog>
-        </el-form-item>
-        <el-form-item label="封面背景" prop="initiator">
-          <el-upload
-            :action="academic"
-            list-type="picture-card"
-            :on-preview="posterPreview"
-            :on-success="posterSuccess"
-            :on-exceed="posterExceed"
-            :limit='1'
-            :multiple="false"
-            accept=".jpg, .png"
-            :file-list="posterImageUrlArray"
-            :on-remove="posterRemove">
-            <div class="lin">上传封面</div>
-          </el-upload>
-          <div style="font-size: 12px;color: #999;">上传大小不可超过5M，且只能上传一张（宽高比例：4:3）</div>
-          <el-dialog :append-to-body="true" style="z-index: 10000!important;" :visible.sync="dialogVisible">
-            <img width="100%" :src="dialogImageUrl" alt="">
-          </el-dialog>
-        </el-form-item>
-        <el-form-item label="分享卡片" prop="initiator">
-          <el-upload
-            :action="cover"
-            list-type="picture-card"
-            :on-preview="coverPreview"
-            :on-success="coverSuccess"
-            :on-exceed="coverExceed"
-            :limit='1'
-            :multiple="false"
-            accept=".jpg, .png"
-            :file-list="coverImageUrlArray"
-            :on-remove="coverRemove">
-            <div class="lin">上传卡片</div>
-          </el-upload>
-          <div style="font-size: 12px;color: #999;">上传大小不可超过5M，且只能上传一张（宽高比例：16:9）</div>
-          <el-dialog :append-to-body="true" style="z-index: 10000!important;" :visible.sync="dialogVisible">
-            <img width="100%" :src="dialogImageUrl" alt="">
-          </el-dialog>
-        </el-form-item>
-        <el-form-item label="相关文献">
-          <div style="display: flex;align-items: center; margin-bottom: 5px;" v-for="(item,index) in details" :key="index">
-            <el-input style="width: 20%!important;margin-right: 20px"
-                      v-model="item.literatureName" auto-complete="off" placeholder="文献标题">index
-            </el-input>
-            <el-upload
-              :action="cover"
-              list-type="picture-card"
-              :on-preview="detailsPreview"
-              :on-success="(value)=> detailsSuccess(index, value)"
-              :on-exceed="detailsExceed"
-              :limit='1'
-              :multiple="false"
-              accept=".jpg, .png"
-              :file-list="item.urlArray"
-              :on-remove="(value)=> detailsRemove(index, value)">
-              <div class="lin">上传内容</div>
-            </el-upload>
-<!--            <div style="font-size: 12px;color: #999;">上传大小不可超过5M，且只能上传一张（宽高比例：16:9）</div>-->
-            <el-dialog :append-to-body="true" style="z-index: 10000!important;" :visible.sync="dialogVisible">
-              <img width="100%" :src="dialogImageUrl" alt="">
-            </el-dialog>
-
-            <div style=" margin-left: 20px;">
-              <el-button v-if="index != details.length - 1" style="background: #e95a3c!important;" type="primary" @click="removeItem(index)">
-                取消 </el-button>
-              <el-button v-if="index == details.length - 1" style="background: #E6A23C!important;" type="primary" @click="addItem"> 添加 </el-button>
-
-            </div>
-          </div>
-
-        </el-form-item>
-      </el-form>
-
-      <div style="margin: 0 auto!important;text-align: center" class="dialog-footer">
-        <el-button @click="addDialogFormVisibleTap">取 消</el-button>
-        <el-button type="primary" @click="addUserSubmit()">保存</el-button>
-      </div>
-    </el-dialog>
-    <!-- 编辑用户对话框 -->
-    <el-dialog title="编辑静态EDA" :visible.sync="editDialogFormVisible" @close='editDialogFormVisibleTap'>
-      <el-form :model="addForm" style="width: 100%;overflow:auto;height: 550px;" label-width="80px" ref="addUserForm">
-        <el-form-item label="标题" prop="liveName">
-          <el-input v-model="addForm.articleTitle" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="适应症">
-          <el-select v-model="addForm.indicationName" filterable placeholder="请选择适应症类型"  clearable @clear="indicationNull" @change="">
-            <el-option
-              v-for="(item,index) in indicationList"
-              :key="item.dictCode"
-              :label="item.dictName"
-              :value="item.dictCode"
-              @click.native="addindicationListTap(index)"></el-option>
-          </el-select>
-        </el-form-item>
-
-        <el-form-item label="拜访话术" prop="liveOrg">
-          <el-input rows="4"  type="textarea" v-model="addForm.talkSkillContent" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="文章内容" prop="initiator">
+        <el-form-item label="学术内容" prop="initiator">
           <el-upload
             :action="academic"
             list-type="picture-card"
@@ -298,39 +171,89 @@
             <img width="100%" :src="dialogImageUrl" alt="">
           </el-dialog>
         </el-form-item>
-        <el-form-item label="相关文献">
-          <div style="display: flex;align-items: center; margin-bottom: 5px;" v-for="(item,index) in details" :key="index">
-            <el-input style="width: 20%!important;margin-right: 20px"
-                      v-model="item.literatureName" auto-complete="off" placeholder="文献标题">index
-            </el-input>
-            <el-upload
-              :action="cover"
-              list-type="picture-card"
-              :on-preview="detailsPreview"
-              :on-success="(value)=> detailsSuccess(index, value)"
-              :on-exceed="detailsExceed"
-              :limit='1'
-              :multiple="false"
-              accept=".jpg, .png"
-              :file-list="item.urlArray"
-              :on-remove="(value)=> detailsRemove(index, value)">
-              <div class="lin">上传内容</div>
-            </el-upload>
-            <!--            <div style="font-size: 12px;color: #999;">上传大小不可超过5M，且只能上传一张（宽高比例：16:9）</div>-->
-            <el-dialog :append-to-body="true" style="z-index: 10000!important;" :visible.sync="dialogVisible">
-              <img width="100%" :src="dialogImageUrl" alt="">
-            </el-dialog>
+      </el-form>
 
-            <div style=" margin-left: 20px;">
-              <el-button v-if="index != details.length - 1" style="background: #e95a3c!important;" type="primary" @click="removeItem(index)">
-                取消 </el-button>
-              <el-button v-if="index == details.length - 1" style="background: #E6A23C!important;" type="primary" @click="addItem"> 添加 </el-button>
+      <div style="margin: 0 auto!important;text-align: center" class="dialog-footer">
+        <el-button @click="addDialogFormVisibleTap">取 消</el-button>
+        <el-button type="primary" @click="addUserSubmit()">保存</el-button>
+      </div>
+    </el-dialog>
+    <!-- 编辑用户对话框 -->
+    <el-dialog title="编辑幻灯" :visible.sync="editDialogFormVisible" @close='editDialogFormVisibleTap'>
+      <el-form :model="addForm" style=" width: 100%;overflow:auto;height: 550px;" label-width="80px" ref="addUserForm">
+        <el-form-item label="标题" prop="liveName">
+          <el-input v-model="addForm.articleTitle" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="适应症">
+          <el-select v-model="addForm.indicationName" filterable placeholder="请选择适应症类型"  clearable @clear="indicationNull" @change="">
+            <el-option
+              v-for="(item,index) in indicationList"
+              :key="item.dictCode"
+              :label="item.dictName"
+              :value="item.dictCode"
+              @click.native="addindicationListTap(index)"></el-option>
+          </el-select>
+        </el-form-item>
 
-            </div>
-          </div>
-
+        <el-form-item label="学术内容" prop="initiator">
+          <el-upload
+            :action="academic"
+            list-type="picture-card"
+            :on-preview="contentPreview"
+            :on-success="contentSuccess"
+            :on-exceed="contentExceed"
+            :limit='100'
+            :multiple="false"
+            accept=".jpg, .png"
+            :file-list="contentImageUrlArray"
+            :on-remove="contentRemove">
+            <div class="lin">上传文章</div>
+          </el-upload>
+          <!--          <div style="font-size: 12px;color: #999;">上传大小不可超过5M，且只能上传一张（宽高比例：4:3）</div>-->
+          <el-dialog :append-to-body="true" style="z-index: 10000!important;" :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt="">
+          </el-dialog>
+        </el-form-item>
+        <el-form-item label="封面背景" prop="initiator">
+          <el-upload
+            :action="academic"
+            list-type="picture-card"
+            :on-preview="posterPreview"
+            :on-success="posterSuccess"
+            :on-exceed="posterExceed"
+            :limit='1'
+            :multiple="false"
+            accept=".jpg, .png"
+            :file-list="posterImageUrlArray"
+            :on-remove="posterRemove">
+            <div class="lin">上传封面</div>
+          </el-upload>
+          <div style="font-size: 12px;color: #999;">上传大小不可超过5M，且只能上传一张（宽高比例：4:3）</div>
+          <el-dialog :append-to-body="true" style="z-index: 10000!important;" :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt="">
+          </el-dialog>
+        </el-form-item>
+        <el-form-item label="分享卡片" prop="initiator">
+          <el-upload
+            :action="cover"
+            list-type="picture-card"
+            :on-preview="coverPreview"
+            :on-success="coverSuccess"
+            :on-exceed="coverExceed"
+            :limit='1'
+            :multiple="false"
+            accept=".jpg, .png"
+            :file-list="coverImageUrlArray"
+            :on-remove="coverRemove">
+            <div class="lin">上传卡片</div>
+          </el-upload>
+          <div style="font-size: 12px;color: #999;">上传大小不可超过5M，且只能上传一张（宽高比例：16:9）</div>
+          <el-dialog :append-to-body="true" style="z-index: 10000!important;" :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt="">
+          </el-dialog>
         </el-form-item>
       </el-form>
+
       <div style="margin: 0 auto!important;text-align: center" class="dialog-footer">
 
         <el-button @click="editDialogFormVisibleTap">取 消</el-button>
@@ -357,14 +280,6 @@
     data() {
       let that = this;
       return {
-        // 相关文献
-        details : [
-          {
-            literatureId: null,
-            literatureUrl: null,
-            literatureName: null
-          }
-        ],
         liveViewList:[],//直播观看人数列表
         // "http://yifang.insightin.cn/live_img/poster/1615184721566/4fc3222f0ef00c0a1e08794ef682abc.jpg"
         contentImageUrlArray: [],
@@ -376,15 +291,11 @@
         dialogImageUrl: '',
         dialogVisible: false,
         headers:{},
-        academic:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=EDA',//海报
-        cover:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=EDA',//封面
-        meet:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=EDA',//会议介绍
-        expert:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=EDA',//专家介绍
+        academic:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=slide_show',//海报
+        cover:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=slide_show',//封面
+        meet:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=slide_show',//会议介绍
+        expert:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=slide_show',//专家介绍
 
-        // academic:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=EDA',//海报
-        // coverEdit:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=EDA',//海报
-        // meetEdit:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=EDA',//海报
-        // expertEdit:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=EDA',//海报
         posterEd:'',//上传图片带参
 
         doctorListVal: [],//参会主席列表
@@ -416,7 +327,7 @@
         userListData: {
           articleTitle: '',//标题
           indication: '',//适应症
-          edaStatus: '',//状态
+          status: '',//状态
           currentPage: 1,
           pageSize: 10,
         },
@@ -430,16 +341,13 @@
         addDialogFormVisible: false,
 
         addForm: {
-          edaId: null,//id
+          slideShowId: null,//id
           articleTitle: '',//名称
           indication: '',//适应症(三方会特有)(字典)
           indicationName:'',
-          talkSkillContent:'',//拜访话术
           titleImageUrl: '',//封面图
           shareImgUrl: '',//分享卡片
           articleImgList: [],//内容图
-          edaLiteratureList: [],//相关文献
-          edaType: '',//EDA类型
         },
         editDialogFormVisible: false,
         grantDialogFormVisible: false,
@@ -465,7 +373,7 @@
           this.initList();
         }, 500);
       },
-      "userListData.edaStatus"() {
+      "userListData.status"() {
         delay(() => {
           this.userListData.currentPage = 1
           this.initList();
@@ -536,78 +444,7 @@
       },
 
 
-
-      // 添加相关文献
-      addItem: function () {
-        let  detailsNew =
-          {
-            literatureId: null,
-            url: null,
-            literatureName: null,
-            urlArray:[]
-          }
-
-        this.details.push(detailsNew);
-        console.log(this.details);
-
-      },
-      // 取消
-      removeItem: function (index) {
-        this.details.splice(index, 1);
-        console.log(this.details);
-      },
-
-      // 文献成功返回结果
-      detailsSuccess(res,file,index) {
-        console.log('res=',res);
-        console.log('file=',file);
-        if (file.code == '200') {
-          if (file.status == 'success') {
-            this.details[res].url = file.data.fileFullPath;
-            this.details[res].urlArray = [];
-            let url = {
-              'url':''
-            }
-            this.details[res].urlArray.push(url);
-
-            this.details[res].urlArray[0].url = file.data.fileFullPath;
-            console.log('图片地址=',file.data.fileFullPath);
-
-          } else {
-            this.$message({
-              message: file.message,
-              type: 'error'
-            })
-          }
-        } else {
-          this.$message({
-            message: file.message,
-            type: 'error'
-          })
-        }
-
-      },
-
-      // 文献删除
-      detailsRemove(res,file) {
-        this.details[res].url = null
-        this.details[res].urlArray = []
-      },
-      // 文献预览图片
-      detailsPreview(file) {
-        this.dialogImageUrl = file.url;
-        this.dialogVisible = true;
-        console.log('1111=',file);
-      },
-      // 文献超出数量提醒
-      detailsExceed() {
-        this.$message({
-          message: '超过数量限制',
-          type: 'error'
-        })
-      },
-
-      // 卡片封面删除
+      // 卡片封面删
       coverRemove(file, fileList) {
         this.addForm.shareImgUrl = '';
       },
@@ -698,12 +535,12 @@
         let userListData = {}
 
         userListData = qs.stringify({
-          edaId:row.staticEdaId
+          slideShowId:row.slideShowId
         });
 
         // userListData.push(row.userId)
         console.log('userListData=', userListData)
-        let url = '/web/v1.0/academic/eda/eda-status-change'
+        let url = '/web/v1.0/academic/slide-show/slide-show-status-change'
         api.post(url, {}, userListData).then(response => {
           this.loading = false
           if (response.code == '200') {
@@ -733,7 +570,7 @@
       ChongzhiTap() {
         this.userListData.articleTitle = ''
         this.userListData.indication = ''
-        this.userListData.edaStatus = ''
+        this.userListData.status = ''
         this.indicationName = ''
         this.conferenceTypeName = ''
         this.userListData.currentPage = 1
@@ -865,7 +702,7 @@
       },
       // 清空三方会类型
       liveStatusNull(val) {
-        this.userListData.edaStatus = '';
+        this.userListData.status = '';
       },
       // 清空三方会类型
       indicationNull(val) {
@@ -884,7 +721,7 @@
       // 状态查询
       liveStatusTap(index) {
         console.log('区域下标=', index)
-        this.userListData.edaStatus = this.liveStatusList[index]
+        this.userListData.status = this.liveStatusList[index]
         // this.conferenceTypeName = this.conferenceTypeList[index].dictName
       },
       // 适应症类型添加
@@ -936,15 +773,15 @@
         userListData = this.userListData
 
         console.log('userListData=', userListData)
-        let url = '/web/v1.0/academic/eda/static-eda-page'
+        let url = '/web/v1.0/academic/slide-show/slide-show-page'
         api.get(url, userListData).then(response => {
           // console.log('返回值!', response.data.userList.item)
           this.loading = false
           if (response.code == '200') {
             if (response.status == 'success') {
-              let list = response.data.staticEdaList.items
-              this.totalCount = response.data.staticEdaList.totalCount
-              this.total = response.data.staticEdaList.totalCount
+              let list = response.data.slideShowList.items
+              this.totalCount = response.data.slideShowList.totalCount
+              this.total = response.data.slideShowList.totalCount
               this.userList = list
             } else {
               this.$message({
@@ -966,7 +803,7 @@
 
       },
       // 添加用户
-      addUserSubmit() {
+      43() {
 
         this.paginaSel = 0
         // return
@@ -992,29 +829,18 @@
           return
         }
 
-        if(this.details.length != 0){
-          for (let i = 0; i < this.details.length; i++) {
-              this.details[i].urlArray = []
-          }
-        }
-
-
         this.loading = true
         let userListData = {};
         userListData = {
-          edaId:this.addForm.edaId,
+          slideShowId:this.addForm.slideShowId,
           articleTitle: this.addForm.articleTitle,
           indication: this.addForm.indication,
-          talkSkillContent: this.addForm.talkSkillContent,
           titleImageUrl: this.addForm.titleImageUrl,
           shareImgUrl: this.addForm.shareImgUrl,
           articleImgList: this.addForm.articleImgList,
-          edaLiteratureList: this.details,
-          edaType: 'static',
         };
-      //     edaLiteratureList: JSON.stringify(this.details),
         console.log('userListData=', userListData)
-        let url = '/web/v1.0/academic/eda/eda-save'
+        let url = '/web/v1.0/academic/slide-show/slide-show-save'
         api.postn(url, {}, userListData).then(response => {
           console.log('response=', response)
           this.loading = false
@@ -1023,27 +849,13 @@
             if (response.status == 'success') {
               this.addDialogFormVisible = false;
               this.editDialogFormVisible = false;
-
               this.initList();
-              this.addForm.edaId = ''
+              this.addForm.slideShowId = ''
               this.addForm.articleTitle = ''
               this.addForm.indication = ''
-              this.addForm.talkSkillContent = ''
               this.addForm.titleImageUrl = ''
               this.addForm.articleImgList = []
               this.addForm.shareImgUrl = ''
-              this.details = []
-              let  detailsNew =
-                {
-                  literatureId: null,
-                  url: null,
-                  literatureName: null,
-                  urlArray:[]
-                }
-
-              this.details.push(detailsNew);
-              this.contentImageUrlArray = []
-
             } else {
               this.$message({
                 message: response.message,
@@ -1071,20 +883,11 @@
         this.addForm.titleImageUrl = ''
         this.addForm.articleImgList = []
         this.addForm.shareImgUrl = ''
-        this.details = []
         this.contentImageUrlArray = []
         this.posterImageUrlArray = []
         this.coverImageUrlArray = []
-        this.details = []
-        let  detailsNew =
-          {
-            literatureId: null,
-            url: null,
-            literatureName: null,
-            urlArray:[]
-          }
 
-        this.details.push(detailsNew);
+
       },
       // 取消编辑弹窗
       editDialogFormVisibleTap() {
@@ -1092,7 +895,7 @@
         this.addDialogFormVisible = false
         this.editDialogFormVisible = false
         this.addDialogFormVisible = false
-        this.addForm.edaId = ''
+        this.addForm.slideShowId = ''
         this.addForm.articleTitle = ''
         this.addForm.indication = ''
         this.addForm.indicationName= ''
@@ -1100,20 +903,10 @@
         this.addForm.titleImageUrl = ''
         this.addForm.articleImgList = []
         this.addForm.shareImgUrl = ''
-        this.details = []
         this.contentImageUrlArray = []
         this.posterImageUrlArray = []
         this.coverImageUrlArray = []
-        this.details = []
-        let  detailsNew =
-          {
-            literatureId: null,
-            url: null,
-            literatureName: null,
-            urlArray:[]
-          }
 
-        this.details.push(detailsNew);
 
       },
       // 取消查看
@@ -1140,84 +933,56 @@
         this.editDialogFormVisible = true
         this.loading = true
         this.posterEd = {
-          edaId:row.staticEdaId
+          slideShowId:row.slideShowId
         }
         let userListData = {
-          edaId: row.staticEdaId
+          slideShowId: row.slideShowId
         }
-        let url = '/web/v1.0/academic/eda/eda-info'
+        let url = '/web/v1.0/academic/slide-show/slide-show-info'
         api.get(url, userListData).then(response => {
           console.log('信息!', response)
           this.loading = false
           if (response.code == '200') {
             if (response.status == 'success') {
-              let edaInfo = response.data.edaInfo
-              // this.initList();
-              // let list = [];
-              // for (let i = 0; i < liveInfo.lecturerList.length; i++) {
-              //   list.push(liveInfo.lecturerList[i].lecturerId)
-              //   if(i == liveInfo.lecturerList.length - 1){
-              //     this.addForm.lecturerIdList = list
-              //   }
-              //
-              // }
+              let slideShowInfo = response.data.slideShowInfo
+
               console.log('this.indicationList=!', this.indicationList)
 
               for (let i = 0; i < this.indicationList.length; i++) {
-                if(this.indicationList[i].dictCode == edaInfo.indication){
+                if(this.indicationList[i].dictCode == slideShowInfo.indication){
                   this.addForm.indicationName = this.indicationList[i].dictName
                 }
               }
 
-              this.addForm.articleImgList = edaInfo.articleImgList
-              this.addForm.articleTitle = edaInfo.articleTitle
-              this.addForm.indication = edaInfo.indication
-              this.addForm.edaId = edaInfo.edaId
-              this.addForm.shareImgUrl = edaInfo.shareImgUrl
-              this.addForm.talkSkillContent = edaInfo.talkSkillContent
-              this.addForm.titleImageUrl = edaInfo.titleImageUrl
+              this.addForm.articleImgList = slideShowInfo.articleImgList
+              this.addForm.articleTitle = slideShowInfo.articleTitle
+              this.addForm.indication = slideShowInfo.indication
+              this.addForm.slideShowId = slideShowInfo.slideShowId
+              this.addForm.shareImgUrl = slideShowInfo.shareImgUrl
+              this.addForm.titleImageUrl = slideShowInfo.titleImageUrl
 
-              for (let i = 0; i < edaInfo.articleImgList.length; i++) {
+              for (let i = 0; i < slideShowInfo.articleImgList.length; i++) {
                 let contePath = {
                   'url': ''
                 }
-                contePath.url = edaInfo.articleImgList[i].imgUrl
+                contePath.url = slideShowInfo.articleImgList[i].imgUrl
                 this.contentImageUrlArray.push(contePath)
               }
-              console.log('edaInfo.edaLiteratureList!', edaInfo.edaLiteratureList)
-
-              if(edaInfo.edaLiteratureList.length != 0){
-                for (let i = 0; i < edaInfo.edaLiteratureList.length; i++) {
-                  let contePath = {
-                    'url': ''
-                  }
-                  edaInfo.edaLiteratureList[i].urlArray = [];
-                  contePath.url = edaInfo.edaLiteratureList[i].url;
-                  console.log('contePath!',contePath)
-                  console.log('edaInfo.edaLiteratureList!',edaInfo.edaLiteratureList)
-                  edaInfo.edaLiteratureList[i].urlArray.push(contePath)
-                  console.log('edaInfo.edaLiteratureList!',edaInfo.edaLiteratureList)
-                }
-              }
-              this.details = edaInfo.edaLiteratureList
-
-              console.log('this.details!', this.details)
-
-              // contentImageUrlArray: [],
-              //   wenxianImageUrlArray:[],
-              if(edaInfo.titleImageUrl != null && edaInfo.titleImageUrl != ''){
+              if(slideShowInfo.titleImageUrl != null && slideShowInfo.titleImageUrl != ''){
                 let liveImgPosterPath = {
-                  'url': edaInfo.titleImageUrl
+                  'url': slideShowInfo.titleImageUrl
                 }
                 this.posterImageUrlArray.push(liveImgPosterPath)
               }
               //
-              if(edaInfo.shareImgUrl != null && edaInfo.shareImgUrl != ''){
+              if(slideShowInfo.shareImgUrl != null && slideShowInfo.shareImgUrl != ''){
                 let liveImgCoverPath = {
-                  'url': edaInfo.shareImgUrl
+                  'url': slideShowInfo.shareImgUrl
                 }
                 this.coverImageUrlArray.push(liveImgCoverPath)
               }
+
+
 
             } else {
               this.$message({

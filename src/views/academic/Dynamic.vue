@@ -4,9 +4,9 @@
 
     <el-row>
       <el-col :span="24" style="margin-top: 20px;">
-        <el-input style="margin-left: 1%;" placeholder="会议名称查询" class="search-input"
-                  v-model="userListData.conferenceName"></el-input>
-        <el-select style="margin-left: 1%;" v-model="indicationName" filterable @clear="indicatNull" clearable
+        <el-input style="margin-left: 1%;width: 8%" placeholder="标题查询" class="search-input"
+                  v-model="userListData.articleTitle"></el-input>
+        <el-select style="margin-left: 1%;width: 8%" v-model="indicationName" filterable @clear="indicatNull" clearable
                    placeholder="适应症查询" @change="">
 
           <el-option
@@ -18,46 +18,21 @@
             @click.native="indicatTap(index)"></el-option>
         </el-select>
 
-        <el-select style="margin-left: 1%;" v-model="conferenceTypeName" filterable @clear="conferTypeNull" clearable
-                   placeholder="会议类型查询" @change="">
+        <el-select style="margin-left: 1%;width: 8%" v-model="liveStatus" filterable @clear="liveStatusNull" clearable
+                   placeholder="状态查询" @change="">
 
           <el-option
-            v-for="(item,index) in conferenceTypeList"
-            :key="item.dictCode"
-            :label="item.dictName"
-            :value="item.dictCode"
+            v-for="(item,index) in liveStatusList"
+            :key="item"
+            :label="item"
+            :value="item"
             :style="'width:100%;'"
-            @click.native="conferenceTap(index)"></el-option>
+            @click.native="liveStatusTap(index)"></el-option>
         </el-select>
 
 
-        <el-date-picker
-          v-model="conferenceDateBegin"
-          type="date"
-          :editable=false
-          value-format="yyyy-MM-dd"
-          :picker-options="pickerOptionscreate"
-          placeholder="开始时间" @change="change1"
-          style="margin-left: 1%;"
-        >
-        </el-date-picker>
-        <span> - </span>
-        <el-date-picker
-          v-model="conferenceDateEnd"
-          type="date"
-          :editable=false
-          value-format="yyyy-MM-dd"
-          :picker-options="pickerOptionsend"
-          placeholder="结束时间" @change="change2"
-
-        >
-        </el-date-picker>
-
-
-        <!--        <el-button type="primary" slot="append" ></el-button>-->
         <el-button type="primary" style="margin-left: 1%;" @click="ChaxunTap">查询</el-button>
-        <!--        <el-button type="primary" @click="ExportListTap">导出</el-button>-->
-        <el-button type="primary" @click="addDialogFormVisible=true">创建会议</el-button>
+        <el-button type="primary" @click="addDialogFormVisible=true">创建</el-button>
         <el-button style="margin-left: 1%;" type="primary" @click="ChongzhiTap">重置</el-button>
       </el-col>
     </el-row>
@@ -76,75 +51,44 @@
       >
       </el-table-column>
       <el-table-column
-        prop="conferenceName"
-        label="会议名称"
+        prop="articleTitle"
+        label="动态EDA标题"
         align="center"
-        width="150">
+        width="300">
       </el-table-column>
       <el-table-column
         prop="indication"
         label="适应症"
         align="center"
-        width="60">
-      </el-table-column>
-      <el-table-column
-        prop="conferenceType"
-        label="会议类型"
-        align="center"
         width="80">
       </el-table-column>
       <el-table-column
-        prop="conferencePlace"
-        label="会议地点"
+        prop="department"
+        label="启用状态"
+        align="center"
+        width="120">
+        <template slot-scope="scope">
+          <el-switch v-model="scope.row.status" @change="changeUserState(scope.row)"></el-switch>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="articleDate"
+        label="上传时间"
         align="center"
         width="150">
       </el-table-column>
       <el-table-column
-        prop="conferenceDateBegin"
-        label="会议开始时间"
+        prop="talkSkillContent"
+        label="拜访话术"
         align="center"
-        width="190">
+        width="750">
       </el-table-column>
-      <el-table-column
-        prop="conferenceDateEnd"
-        label="会议结束时间"
-        align="center"
-        width="200">
-      </el-table-column>
-      <el-table-column
-        prop="conferenceChairman"
-        label="参会主席"
-        align="center"
-        width="150">
-      </el-table-column>
-      <el-table-column
-        prop="conferenceLecturer"
-        label="参会讲师"
-        align="center"
-        width="150">
-      </el-table-column>
-      <el-table-column
-        prop="createDt"
-        label="录入时间"
-        align="center"
-        width="190">
-      </el-table-column>
-      <el-table-column
-        prop="conferenceStatus"
-        label="状态"
-        align="center"
-        width="80">
-      </el-table-column>
-      <el-table-column
-        prop="isSummary"
-        label="总结"
-        align="center"
-        width="80">
-      </el-table-column>
+
+
       <el-table-column label="操作" align="center">
         <template slot-scope="scope">
           <el-button size="mini" type="primary" plain @click="showEditDialog(scope.row,1)">编辑</el-button>
-<!--          <el-button size="mini" type="primary" plain @click="showEditDialog(scope.row,1)">编辑</el-button>-->
+          <!--          <el-button size="mini" type="primary" plain @click="showEditDialog(scope.row,1)">编辑</el-button>-->
         </template>
       </el-table-column>
     </el-table>
@@ -161,42 +105,14 @@
       >
       </el-pagination>
     </div>
-    <!--添加用户对话框:-->
-
-    <el-dialog title="创建会议" :visible.sync="addDialogFormVisible" @close="addDialogFormVisibleTap">
-      <el-form :model="addForm" label-width="80px" ref="addUserForm">
-        <el-form-item label="会议名称" prop="conferenceName">
-          <el-input v-model="addForm.conferenceName" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="会议类型">
-          <el-select v-model="addForm.addconferenceTypeName" filterable placeholder="请选择会议类型" @change="">
-            <el-option
-              v-for="(item,index) in conferenceTypeList"
-              :key="item.dictCode"
-              :label="item.dictName"
-              :value="item.dictCode"
-              @click.native="addconferenceTypeTap(index)"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="会议地点" prop="conferencePlace">
-          <el-input v-model="addForm.conferencePlace" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="会议时间">
-          <el-date-picker
-            v-model="conferenceDateList"
-            type="datetimerange"
-            format="yyyy-MM-dd HH:mm"
-            value-format="yyyy-MM-dd HH:mm"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            :default-time="['12:00:00']">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="预计人数" prop="estimateNumber">
-          <el-input v-model="addForm.estimateNumber" auto-complete="off"></el-input>
+    <!--创建会议对话框:-->
+    <el-dialog  title="创建动态EDA" :visible.sync="addDialogFormVisible" @close="addDialogFormVisibleTap">
+      <el-form :model="addForm" style="width: 100%;overflow:auto;height: 550px;" label-width="80px" ref="addUserForm">
+        <el-form-item label="标题" prop="liveName">
+          <el-input v-model="addForm.articleTitle" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="适应症">
-          <el-select v-model="addForm.indicationName" filterable placeholder="请选择适应症类型" @change="">
+          <el-select v-model="addForm.indicationName" filterable placeholder="请选择适应症类型"  clearable @clear="indicationNull" @change="">
             <el-option
               v-for="(item,index) in indicationList"
               :key="item.dictCode"
@@ -205,100 +121,114 @@
               @click.native="addindicationListTap(index)"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="参会主席">
-          <el-select v-model="addForm.chairmanList" multiple filterable style="width: 100%" placeholder="请选择">
-            <el-option
-              v-for="item in doctorListVal"
-              :key="item.doctorId"
-              :label="item.doctorName"
-              :value="item.doctorId"
-            >
-            </el-option>
-          </el-select>
+
+        <el-form-item label="拜访话术" prop="liveOrg">
+          <el-input rows="4"  type="textarea" v-model="addForm.talkSkillContent" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="参会讲师">
-          <el-select v-model="addForm.lecturerList" multiple filterable style="width: 100%" placeholder="请选择">
-            <el-option
-              v-for="item in doctorListVal"
-              :key="item.doctorId"
-              :label="item.doctorName"
-              :value="item.doctorId"
-            >
-            </el-option>
-          </el-select>
+        <el-form-item label="文章内容" prop="initiator">
+          <el-upload
+            :action="academic"
+            list-type="picture-card"
+            :on-preview="contentPreview"
+            :on-success="contentSuccess"
+            :on-exceed="contentExceed"
+            :limit='100'
+            :multiple="false"
+            accept=".jpg, .png"
+            :file-list="contentImageUrlArray"
+            :on-remove="contentRemove">
+            <div class="lin">上传文章</div>
+          </el-upload>
+          <!--          <div style="font-size: 12px;color: #999;">上传大小不可超过5M，且只能上传一张（宽高比例：4:3）</div>-->
+          <el-dialog :append-to-body="true" style="z-index: 10000!important;" :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt="">
+          </el-dialog>
         </el-form-item>
-        <el-form-item label="会议日程">
-          <div style="display: flex;margin-bottom: 5px;" v-for="(item,index) in details">
-            <el-date-picker
-              v-model="item.scheduleDateList"
-              type="datetimerange"
-              format="yyyy-MM-dd HH:mm"
-              value-format="yyyy-MM-dd HH:mm"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :default-time="['12:00:00']">
-            </el-date-picker>
-            <el-input
-              style="width: 20%!important;margin-left: 20px"
-              placeholder="讲题"
-              v-model="item.scheduleType"
-              maxlength="18"
-              auto-complete="off"
-              show-word-limit
-            >
-            </el-input>
-            <span> - </span>
+        <el-form-item label="封面背景" prop="initiator">
+          <el-upload
+            :action="academic"
+            list-type="picture-card"
+            :on-preview="posterPreview"
+            :on-success="posterSuccess"
+            :on-exceed="posterExceed"
+            :limit='1'
+            :multiple="false"
+            accept=".jpg, .png"
+            :file-list="posterImageUrlArray"
+            :on-remove="posterRemove">
+            <div class="lin">上传封面</div>
+          </el-upload>
+          <div style="font-size: 12px;color: #999;">上传大小不可超过5M，且只能上传一张（宽高比例：4:3）</div>
+          <el-dialog :append-to-body="true" style="z-index: 10000!important;" :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt="">
+          </el-dialog>
+        </el-form-item>
+        <el-form-item label="分享卡片" prop="initiator">
+          <el-upload
+            :action="cover"
+            list-type="picture-card"
+            :on-preview="coverPreview"
+            :on-success="coverSuccess"
+            :on-exceed="coverExceed"
+            :limit='1'
+            :multiple="false"
+            accept=".jpg, .png"
+            :file-list="coverImageUrlArray"
+            :on-remove="coverRemove">
+            <div class="lin">上传卡片</div>
+          </el-upload>
+          <div style="font-size: 12px;color: #999;">上传大小不可超过5M，且只能上传一张（宽高比例：16:9）</div>
+          <el-dialog :append-to-body="true" style="z-index: 10000!important;" :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt="">
+          </el-dialog>
+        </el-form-item>
+        <el-form-item label="相关文献">
+          <div style="display: flex;align-items: center; margin-bottom: 5px;" v-for="(item,index) in details" :key="index">
             <el-input style="width: 20%!important;margin-right: 20px"
-                      v-model="item.schedulePerson" auto-complete="off" placeholder="讲者">index
+                      v-model="item.literatureName" auto-complete="off" placeholder="文献标题">index
             </el-input>
-            <el-button v-if="index != details.length - 1" style="background: #e95a3c!important;" type="primary" @click="removeItem(index)">
-             取消 </el-button>
-            <el-button v-if="index == details.length - 1" style="background: #E6A23C!important;" type="primary" @click="addItem"> 添加 </el-button>
+            <el-upload
+              :action="cover"
+              list-type="picture-card"
+              :on-preview="detailsPreview"
+              :on-success="(value)=> detailsSuccess(index, value)"
+              :on-exceed="detailsExceed"
+              :limit='1'
+              :multiple="false"
+              accept=".jpg, .png"
+              :file-list="item.urlArray"
+              :on-remove="(value)=> detailsRemove(index, value)">
+              <div class="lin">上传内容</div>
+            </el-upload>
+            <!--            <div style="font-size: 12px;color: #999;">上传大小不可超过5M，且只能上传一张（宽高比例：16:9）</div>-->
+            <el-dialog :append-to-body="true" style="z-index: 10000!important;" :visible.sync="dialogVisible">
+              <img width="100%" :src="dialogImageUrl" alt="">
+            </el-dialog>
+
+            <div style=" margin-left: 20px;">
+              <el-button v-if="index != details.length - 1" style="background: #e95a3c!important;" type="primary" @click="removeItem(index)">
+                取消 </el-button>
+              <el-button v-if="index == details.length - 1" style="background: #E6A23C!important;" type="primary" @click="addItem"> 添加 </el-button>
+
+            </div>
           </div>
-          <div style="font-size: 12px;margin-top: 20px">注：为不影响邀请函展示效果，会议日程控制在十条以内。</div>
 
         </el-form-item>
       </el-form>
+
       <div style="margin: 0 auto!important;text-align: center" class="dialog-footer">
         <el-button @click="addDialogFormVisibleTap">取 消</el-button>
         <el-button type="primary" @click="addUserSubmit()">保存</el-button>
       </div>
     </el-dialog>
     <!-- 编辑用户对话框 -->
-    <el-dialog title="编辑会议" :visible.sync="editDialogFormVisible" @close='editDialogFormVisibleTap'>
-      <el-form :model="addForm" label-width="80px" ref="addUserForm">
-        <el-form-item label="会议名称" prop="conferenceName">
-          <el-input v-model="addForm.conferenceName" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="会议类型">
-          <el-select v-model="addForm.conferenceType" filterable placeholder="请选择会议类型" @change="">
-            <el-option
-              v-for="(item,index) in conferenceTypeList"
-              :key="item.dictCode"
-              :label="item.dictName"
-              :value="item.dictCode"
-              @click.native="addconferenceTypeTap(index)"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="会议地点" prop="conferencePlace">
-          <el-input v-model="addForm.conferencePlace" auto-complete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="会议时间">
-          <el-date-picker
-            v-model="conferenceDateList"
-            type="datetimerange"
-            format="yyyy-MM-dd HH:mm"
-            value-format="yyyy-MM-dd HH:mm"
-            start-placeholder="开始日期"
-            end-placeholder="结束日期"
-            :default-time="['12:00:00']">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="预计人数" prop="estimateNumber">
-          <el-input v-model="addForm.estimateNumber" auto-complete="off"></el-input>
+    <el-dialog title="编辑动态EDA" :visible.sync="editDialogFormVisible" @close='editDialogFormVisibleTap'>
+      <el-form :model="addForm" style="width: 100%;overflow:auto;height: 550px;" label-width="80px" ref="addUserForm">
+        <el-form-item label="标题" prop="liveName">
+          <el-input v-model="addForm.articleTitle" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="适应症">
-          <el-select v-model="addForm.indication" filterable placeholder="请选择适应症类型" @change="">
+          <el-select v-model="addForm.indicationName" filterable placeholder="请选择适应症类型"  clearable @clear="indicationNull" @change="">
             <el-option
               v-for="(item,index) in indicationList"
               :key="item.dictCode"
@@ -307,61 +237,102 @@
               @click.native="addindicationListTap(index)"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="参会主席">
-          <el-select v-model="addForm.chairmanList" multiple filterable style="width: 100%" placeholder="请选择">
-            <el-option
-              v-for="item in doctorListVal"
-              :key="item.doctorId"
-              :label="item.doctorName"
-              :value="item.doctorId"
-            >
-            </el-option>
-          </el-select>
+
+        <el-form-item label="拜访话术" prop="liveOrg">
+          <el-input rows="4"  type="textarea" v-model="addForm.talkSkillContent" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="参会讲师">
-          <el-select v-model="addForm.lecturerList" multiple filterable style="width: 100%" placeholder="请选择">
-            <el-option
-              v-for="item in doctorListVal"
-              :key="item.doctorId"
-              :label="item.doctorName"
-              :value="item.doctorId"
-            >
-            </el-option>
-          </el-select>
+        <el-form-item label="文章内容" prop="initiator">
+          <el-upload
+            :action="academic"
+            list-type="picture-card"
+            :on-preview="contentPreview"
+            :on-success="contentSuccess"
+            :on-exceed="contentExceed"
+            :limit='100'
+            :multiple="false"
+            accept=".jpg, .png"
+            :file-list="contentImageUrlArray"
+            :on-remove="contentRemove">
+            <div class="lin">上传文章</div>
+          </el-upload>
+          <!--          <div style="font-size: 12px;color: #999;">上传大小不可超过5M，且只能上传一张（宽高比例：4:3）</div>-->
+          <el-dialog :append-to-body="true" style="z-index: 10000!important;" :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt="">
+          </el-dialog>
         </el-form-item>
-        <el-form-item label="会议日程">
-          <div style="display: flex;margin-bottom: 5px;" v-for="(item,index) in details">
-            <el-date-picker
-              v-model="item.scheduleDateList"
-              type="datetimerange"
-              format="yyyy-MM-dd HH:mm"
-              value-format="yyyy-MM-dd HH:mm"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :default-time="['12:00:00']">
-            </el-date-picker>
-            <el-input
-              style="width: 20%!important;margin-left: 20px"
-              placeholder="讲题"
-              v-model="item.scheduleType"
-              maxlength="18"
-              auto-complete="off"
-              show-word-limit
-            >
-            </el-input>
-            <span> - </span>
+        <el-form-item label="封面背景" prop="initiator">
+          <el-upload
+            :action="academic"
+            list-type="picture-card"
+            :on-preview="posterPreview"
+            :on-success="posterSuccess"
+            :on-exceed="posterExceed"
+            :limit='1'
+            :multiple="false"
+            accept=".jpg, .png"
+            :file-list="posterImageUrlArray"
+            :on-remove="posterRemove">
+            <div class="lin">上传封面</div>
+          </el-upload>
+          <div style="font-size: 12px;color: #999;">上传大小不可超过5M，且只能上传一张（宽高比例：4:3）</div>
+          <el-dialog :append-to-body="true" style="z-index: 10000!important;" :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt="">
+          </el-dialog>
+        </el-form-item>
+        <el-form-item label="分享卡片" prop="initiator">
+          <el-upload
+            :action="cover"
+            list-type="picture-card"
+            :on-preview="coverPreview"
+            :on-success="coverSuccess"
+            :on-exceed="coverExceed"
+            :limit='1'
+            :multiple="false"
+            accept=".jpg, .png"
+            :file-list="coverImageUrlArray"
+            :on-remove="coverRemove">
+            <div class="lin">上传卡片</div>
+          </el-upload>
+          <div style="font-size: 12px;color: #999;">上传大小不可超过5M，且只能上传一张（宽高比例：16:9）</div>
+          <el-dialog :append-to-body="true" style="z-index: 10000!important;" :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt="">
+          </el-dialog>
+        </el-form-item>
+        <el-form-item label="相关文献">
+          <div style="display: flex;align-items: center; margin-bottom: 5px;" v-for="(item,index) in details" :key="index">
             <el-input style="width: 20%!important;margin-right: 20px"
-                      v-model="item.schedulePerson" auto-complete="off" placeholder="讲者">index
+                      v-model="item.literatureName" auto-complete="off" placeholder="文献标题">index
             </el-input>
-            <el-button v-if="index != details.length - 1" style="background: #e95a3c!important;" type="primary" @click="removeItem(index)">
-              取消 </el-button>
-            <el-button v-if="index == details.length - 1" style="background: #E6A23C!important;" type="primary" @click="addItem"> 添加 </el-button>
+            <el-upload
+              :action="cover"
+              list-type="picture-card"
+              :on-preview="detailsPreview"
+              :on-success="(value)=> detailsSuccess(index, value)"
+              :on-exceed="detailsExceed"
+              :limit='1'
+              :multiple="false"
+              accept=".jpg, .png"
+              :file-list="item.urlArray"
+              :on-remove="(value)=> detailsRemove(index, value)">
+              <div class="lin">上传内容</div>
+            </el-upload>
+            <!--            <div style="font-size: 12px;color: #999;">上传大小不可超过5M，且只能上传一张（宽高比例：16:9）</div>-->
+            <el-dialog :append-to-body="true" style="z-index: 10000!important;" :visible.sync="dialogVisible">
+              <img width="100%" :src="dialogImageUrl" alt="">
+            </el-dialog>
+
+            <div style=" margin-left: 20px;">
+              <el-button v-if="index != details.length - 1" style="background: #e95a3c!important;" type="primary" @click="removeItem(index)">
+                取消 </el-button>
+              <el-button v-if="index == details.length - 1" style="background: #E6A23C!important;" type="primary" @click="addItem"> 添加 </el-button>
+
+            </div>
           </div>
-          <div style="font-size: 12px;margin-top: 20px">注：为不影响邀请函展示效果，会议日程控制在十条以内。</div>
 
         </el-form-item>
       </el-form>
       <div style="margin: 0 auto!important;text-align: center" class="dialog-footer">
+
         <el-button @click="editDialogFormVisibleTap">取 消</el-button>
         <el-button type="primary" @click="addUserSubmit()">保存</el-button>
       </div>
@@ -373,6 +344,7 @@
   import api from '../../api/deliverProxy'
   import qs from "qs";
   import {parseTime} from "@/utils";
+  import {getToken} from "@/utils/auth";
   // 节流函数
   const delay = (function () {
     let timer = 0;
@@ -385,22 +357,43 @@
     data() {
       let that = this;
       return {
-        // 会议日程
+        // 相关文献
         details : [
           {
-            scheduleId: null,
-            scheduleDateList:[],//开始结束
-            scheduleType: null,
-            schedulePerson: null
+            literatureId: null,
+            literatureUrl: null,
+            literatureName: null
           }
         ],
+        liveViewList:[],//直播观看人数列表
+        // "http://yifang.insightin.cn/live_img/poster/1615184721566/4fc3222f0ef00c0a1e08794ef682abc.jpg"
+        contentImageUrlArray: [],
+        wenxianImageUrlArray:[],
+        posterImageUrlArray: [],
+        coverImageUrlArray: [],
+        meetImageUrlArray: [],
+        expertImageUrlArray: [],
+        dialogImageUrl: '',
+        dialogVisible: false,
+        headers:{},
+        academic:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=EDA',//海报
+        cover:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=EDA',//封面
+        meet:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=EDA',//会议介绍
+        expert:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=EDA',//专家介绍
+
+        // academic:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=EDA',//海报
+        // coverEdit:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=EDA',//海报
+        // meetEdit:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=EDA',//海报
+        // expertEdit:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=EDA',//海报
+        posterEd:'',//上传图片带参
+
         doctorListVal: [],//参会主席列表
-        conferenceDateList:[],//会议时间
+        liveDateList:[],//会议时间
         value1: [],
         pickerOptionscreate: {
           disabledDate(time) { //开始时间的禁用
-            if (that.conferenceDateEnd != null) {
-              return time.getTime() > new Date(that.conferenceDateEnd).getTime();
+            if (that.liveDateEnd != null) {
+              return time.getTime() > new Date(that.liveDateEnd).getTime();
 
             }
           }
@@ -408,24 +401,22 @@
         //结束时间
         pickerOptionsend: {
           disabledDate(time) { //结束时间的禁用
-            return time.getTime() < new Date(that.conferenceDateBegin).getTime() - 8.64e7;
+            return time.getTime() < new Date(that.liveDateBegin).getTime() - 8.64e7;
           }
         },
-
-        conferenceDateBegin: '', //起始时间
-        conferenceDateEnd: '', //结束时间
+        liveStatus:'',
+        liveStatusList:['启用','停用'],
+        liveDateBegin: '', //起始时间
+        liveDateEnd: '', //结束时间
         indicationList: [],//适应症
+        departmentDictList:[],//科室
         indicationName: '',//适应症名称
         conferenceTypeList: [],//三方会类型
         conferenceTypeName: '',//三方会名称
-
-
         userListData: {
-          conferenceName: '',
-          conferenceDateBegin: '',
-          conferenceDateEnd: '',
-          conferenceType: '',
-          indication: '',
+          articleTitle: '',//标题
+          indication: '',//适应症
+          edaStatus: '',//状态
           currentPage: 1,
           pageSize: 10,
         },
@@ -437,24 +428,22 @@
         pagesize: 10,
         pagenum: 1,
         addDialogFormVisible: false,
+
         addForm: {
-          conferenceId: null,//会议id
-          conferenceName: '',//会议名称
-          conferenceType: '',//会议类型（字典项）
-          addconferenceTypeName: '',//会议类型（名称）
-          conferencePlace: '',//会议地点
-          conferenceDateBegin: '',//开始时间
-          conferenceDateEnd: '',//结束时间
-          estimateNumber: '',//预计人数
+          edaId: null,//id
+          articleTitle: '',//名称
           indication: '',//适应症(三方会特有)(字典)
-          indicationName: '',//适应症(三方会特有)(名称)
-          chairmanList: [],//参会主席id lis
-          lecturerList: '',//参会讲师id list
-          scheduleList: '',//日程list
+          indicationName:'',
+          talkSkillContent:'',//拜访话术
+          titleImageUrl: '',//封面图
+          shareImgUrl: '',//分享卡片
+          articleImgList: [],//内容图
+          edaLiteratureList: [],//相关文献
+          edaType: '',//EDA类型
         },
         editDialogFormVisible: false,
         grantDialogFormVisible: false,
-
+        LookDialogFormVisible:false,
 
       }
     },
@@ -464,19 +453,7 @@
 
     },
     watch: {
-      "userListData.conferenceName"() {
-        delay(() => {
-          this.userListData.currentPage = 1
-          this.initList();
-        }, 500);
-      },
-      "userListData.conferenceDateEnd"() {
-        delay(() => {
-          this.userListData.currentPage = 1
-          this.initList();
-        }, 500);
-      },
-      "userListData.conferenceDateBegin"() {
+      "userListData.articleTitle"() {
         delay(() => {
           this.userListData.currentPage = 1
           this.initList();
@@ -488,7 +465,7 @@
           this.initList();
         }, 500);
       },
-      "userListData.conferenceType"() {
+      "userListData.edaStatus"() {
         delay(() => {
           this.userListData.currentPage = 1
           this.initList();
@@ -497,74 +474,280 @@
     },
     created() {
       this.initList()
-      this.thirdTap()//三方会类型字典项
-      this.indicationTap()//三方会类型字典项
-      this.SanfangTypeTap()//三方会类型字典项
+      this.indicationTap()//三适应症字典项
     },
     methods: {
-      // 添加会议日程
-      addItem: function () {
-        if (this.details.length > 9){
+
+      // 内容成功返回结果
+      contentSuccess(file) {
+        console.log('file=',file);
+        if (file.code == '200') {
+          if (file.status == 'success') {
+            console.log('file.data.fileFullPath=',file.data.fileFullPath);
+            let articl ={
+              staticEdaImgId:null,
+              imgUrl:'',
+            }
+            articl.imgUrl = file.data.fileFullPath;
+            this.addForm.articleImgList.push(articl)
+            console.log('articleImgList=',this.addForm.articleImgList);
+
+          } else {
+            this.$message({
+              message: file.message,
+              type: 'error'
+            })
+          }
+        } else {
           this.$message({
-            message: '会议日程已超出条目',
+            message: file.message,
             type: 'error'
           })
-          return
         }
+
+      },
+      // 内容删除
+      contentRemove(res,file) {
+        console.log('res=',res);
+        // console.log('res=',res.response.data.fileFullPath);
+        console.log('articleImgList=',this.addForm.articleImgList);
+
+        for(let i=0;i<this.addForm.articleImgList.length;i++){
+          // arr.splice(i,1);//(循环删除所有元素)i是索引，1是长度，null的意思是该元素替换为null
+          if(this.addForm.articleImgList[i].imgUrl == res.url){
+            this.addForm.articleImgList.splice(i,1);//删除第2个元素
+          }
+
+        }
+        console.log('articleImgList=',this.addForm.articleImgList);
+      },
+      // 内容预览图片
+      contentPreview(file) {
+        this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
+        console.log('1111=',file);
+      },
+      // 内容超出数量提醒
+      contentExceed() {
+        this.$message({
+          message: '超过数量限制',
+          type: 'error'
+        })
+      },
+
+
+
+      // 添加相关文献
+      addItem: function () {
         let  detailsNew =
-            {
-              scheduleId: null,
-              scheduleDateList:[],//开始结束
-              scheduleType: null,
-              schedulePerson: null
-            }
+          {
+            literatureId: null,
+            url: null,
+            literatureName: null,
+            urlArray:[]
+          }
 
         this.details.push(detailsNew);
         console.log(this.details);
 
       },
-      // 取消会议日程
+      // 取消
       removeItem: function (index) {
         this.details.splice(index, 1);
         console.log(this.details);
       },
-      // 多选主席
-      changeSelect(val) {
-        if (val.length === this.options.length) {
-          this.checked = true
+
+      // 文献成功返回结果
+      detailsSuccess(res,file,index) {
+        console.log('res=',res);
+        console.log('file=',file);
+        if (file.code == '200') {
+          if (file.status == 'success') {
+            this.details[res].url = file.data.fileFullPath;
+            this.details[res].urlArray = [];
+            let url = {
+              'url':''
+            }
+            this.details[res].urlArray.push(url);
+
+            this.details[res].urlArray[0].url = file.data.fileFullPath;
+            console.log('图片地址=',file.data.fileFullPath);
+
+          } else {
+            this.$message({
+              message: file.message,
+              type: 'error'
+            })
+          }
         } else {
-          this.checked = false
+          this.$message({
+            message: file.message,
+            type: 'error'
+          })
         }
+
       },
-      // 打印
-      clickBtn: function () {
-        console.log(this.addForm.conferenceDateBegin);
-        console.log(this.addForm.conferenceDateEnd);
-        console.log(this.value1);
+
+      // 文献删除
+      detailsRemove(res,file) {
+        this.details[res].url = null
+        this.details[res].urlArray = []
+      },
+      // 文献预览图片
+      detailsPreview(file) {
+        this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
+        console.log('1111=',file);
+      },
+      // 文献超出数量提醒
+      detailsExceed() {
+        this.$message({
+          message: '超过数量限制',
+          type: 'error'
+        })
+      },
+
+      // 卡片封面删除
+      coverRemove(file, fileList) {
+        this.addForm.shareImgUrl = '';
+      },
+
+      // 卡片封面超出数量提醒
+      coverExceed() {
+        this.$message({
+          message: '超过数量限制',
+          type: 'error'
+        })
+      },
+
+      // 卡片封面预览图片
+      coverPreview(file) {
+        this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
+        console.log('1111=',file);
+      },
+      // 卡片封面成功返回结果
+      coverSuccess(file) {
+        console.log('1111=',file);
+        if (file.code == '200') {
+          if (file.status == 'success') {
+            this.addForm.shareImgUrl = file.data.fileFullPath;
+            console.log('this.addForm.shareImgUrl=',this.addForm.shareImgUrl);
+
+          } else {
+            this.$message({
+              message: file.message,
+              type: 'error'
+            })
+          }
+        } else {
+          this.$message({
+            message: file.message,
+            type: 'error'
+          })
+        }
+
+      },
+
+
+      // 封面删除
+      posterRemove(file, fileList) {
+        this.addForm.titleImageUrl = '';
+        // this.delete(this.addForm.liveImgPosterId,'poster')
+      },
+      // 封面超出数量提醒
+      posterExceed() {
+        this.$message({
+          message: '超过数量限制',
+          type: 'error'
+        })
+      },
+      // 封面预览图片
+      posterPreview(file) {
+        this.dialogImageUrl = file.url;
+        this.dialogVisible = true;
+        console.log('1111=',file);
+      },
+      // 封面成功返回结果
+      posterSuccess(file) {
+        console.log('1111=',file);
+        if (file.code == '200') {
+          if (file.status == 'success') {
+            this.addForm.titleImageUrl = file.data.fileFullPath;
+            console.log('this.addForm.titleImageUrl=',this.addForm.titleImageUrl);
+
+          } else {
+            this.$message({
+              message: file.message,
+              type: 'error'
+            })
+          }
+        } else {
+          this.$message({
+            message: file.message,
+            type: 'error'
+          })
+        }
+
+      },
+
+      // 改变用户状态
+      changeUserState(row) {
+        console.log(row)
+        this.loading = true
+        let userListData = {}
+
+        userListData = qs.stringify({
+          edaId:row.staticEdaId
+        });
+
+        // userListData.push(row.userId)
+        console.log('userListData=', userListData)
+        let url = '/web/v1.0/academic/eda/eda-status-change'
+        api.post(url, {}, userListData).then(response => {
+          this.loading = false
+          if (response.code == '200') {
+            if (response.status == 'success') {
+              let openid = response.data.openid;
+              console.log('openid!', openid)
+              // this.logout('444',openid)
+              this.initList()
+
+            } else {
+              this.$message({
+                message: response.message,
+                type: 'error'
+              })
+            }
+          } else {
+            this.$message({
+              message: response.message,
+              type: 'error'
+            })
+          }
+
+        }).catch(error => {
+        })
       },
       // 重置
       ChongzhiTap() {
-        this.userListData.conferenceName = ''
-        this.userListData.conferenceDateEnd = ''
-        this.conferenceDateEnd = ''
-        this.userListData.conferenceDateBegin = ''
-        this.conferenceDateBegin = ''
+        this.userListData.articleTitle = ''
         this.userListData.indication = ''
+        this.userListData.edaStatus = ''
         this.indicationName = ''
-        this.userListData.conferenceType = ''
         this.conferenceTypeName = ''
         this.userListData.currentPage = 1
         this.initList();
       },
       // 开始时间
       change1: function () {
-        console.log('this.conferenceDateBegin=', this.conferenceDateBegin)
-        this.userListData.conferenceDateBegin = this.conferenceDateBegin;
+        console.log('this.liveDateBegin=', this.liveDateBegin)
+        this.userListData.liveDateBegin = this.liveDateBegin;
       },
       // 结束时间
       change2: function () {
-        console.log('conferenceDateEnd=', this.conferenceDateEnd)
-        this.userListData.conferenceDateEnd = this.conferenceDateEnd;
+        console.log('liveDateEnd=', this.liveDateEnd)
+        this.userListData.liveDateEnd = this.liveDateEnd;
       },
       // 三方会主席字典项
       thirdTap() {
@@ -601,6 +784,12 @@
       // 适应症字典项
       indicationTap() {
         this.loading = true
+        let headers = {
+          'token': getToken(),
+        }
+        this.headers = headers
+        console.log('headers=', headers)
+
         let userListData = {};
         console.log('userListData=', userListData)
         let url = '/web/v1.0/conference/conference/indication-select'
@@ -675,9 +864,16 @@
 
       },
       // 清空三方会类型
-      conferTypeNull(val) {
-        this.conferenceTypeName = '';
-        this.userListData.conferenceType = '';
+      liveStatusNull(val) {
+        this.userListData.edaStatus = '';
+      },
+      // 清空三方会类型
+      indicationNull(val) {
+        this.addForm.indication = '';
+      },
+      // 清空三方会类型
+      departmentNull(val) {
+        this.addForm.department = '';
       },
       // 三方会类型查询
       conferenceTap(index) {
@@ -685,7 +881,12 @@
         this.userListData.conferenceType = this.conferenceTypeList[index].dictCode
         this.conferenceTypeName = this.conferenceTypeList[index].dictName
       },
-
+      // 状态查询
+      liveStatusTap(index) {
+        console.log('区域下标=', index)
+        this.userListData.edaStatus = this.liveStatusList[index]
+        // this.conferenceTypeName = this.conferenceTypeList[index].dictName
+      },
       // 适应症类型添加
       addindicationListTap(index) {
         this.addForm.indication = this.indicationList[index].dictCode
@@ -726,28 +927,25 @@
         this.loading = true
         this.paginaSel = 0
         let userListData = {}
-        if (this.userListData.conferenceDateBegin == null) {
-
-          this.userListData.conferenceDateBegin = ''
+        if (this.userListData.liveDateBegin == null) {
+          this.userListData.liveDateBegin = ''
         }
-        if (this.userListData.conferenceDateEnd == null) {
-          this.userListData.conferenceDateEnd = ''
+        if (this.userListData.liveDateEnd == null) {
+          this.userListData.liveDateEnd = ''
         }
         userListData = this.userListData
 
         console.log('userListData=', userListData)
-        let url = '/web/v1.0/conference/conference/third-conference-page'
+        let url = '/web/v1.0/academic/eda/dynamic-eda-page'
         api.get(url, userListData).then(response => {
           // console.log('返回值!', response.data.userList.item)
           this.loading = false
           if (response.code == '200') {
             if (response.status == 'success') {
-              let list = response.data.conferenceList.items
-              this.totalCount = response.data.conferenceList.totalCount
-              console.log('返回值!list=', list)
-              this.total = response.data.conferenceList.totalCount
+              let list = response.data.staticEdaList.items
+              this.totalCount = response.data.staticEdaList.totalCount
+              this.total = response.data.staticEdaList.totalCount
               this.userList = list
-              // location.reload()
             } else {
               this.$message({
                 message: response.message,
@@ -769,67 +967,54 @@
       },
       // 添加用户
       addUserSubmit() {
+
         this.paginaSel = 0
         // return
         console.log('this.addForm=', this.addForm)
-
-        if (!this.addForm.conferenceName) {
-          this.$message('请填写会议名称');
-          return
-        }
-        if (!this.addForm.conferenceType) {
-          this.$message('请填写会议类型');
-          return false
-        }
-        if (!this.addForm.conferencePlace) {
-          this.$message('请填写会议地点');
-          return
-        }
-        if (this.conferenceDateList.length == 0) {
-          this.$message('请选择会议时间');
-          return
-        }
-        if (!this.addForm.estimateNumber) {
-          this.$message('请填写预计人数');
+        if (!this.addForm.articleTitle) {
+          this.$message('请填写标题');
           return
         }
         if (!this.addForm.indication) {
           this.$message('请选择适应症');
+          return false
+        }
+        if (this.addForm.articleImgList.length == 0) {
+          this.$message('请选择文章内容');
           return
         }
-        if (this.addForm.chairmanList.length == 0) {
-          this.$message('请选择参会主席');
+        if (!this.addForm.titleImageUrl) {
+          this.$message('请选择封面图');
           return
         }
-        if (this.addForm.lecturerList.length == 0) {
-          this.$message('请选择参会讲师');
+        if (!this.addForm.shareImgUrl) {
+          this.$message('请选择分享卡片');
           return
         }
-        console.log('this.details=', this.details)
-        for (let i = 0; i < this.details.length; i++) {
-          if(this.details[i].scheduleDateList[0] == null || this.details[i].scheduleDateList[0] == ''){
-            this.$message('请选择日程时间');
-            return
+
+        if(this.details.length != 0){
+          for (let i = 0; i < this.details.length; i++) {
+            this.details[i].urlArray = []
           }
         }
+
+
         this.loading = true
         let userListData = {};
         userListData = {
-          conferenceId:this.addForm.conferenceId,
-          conferenceName: this.addForm.conferenceName,
-          conferenceType: this.addForm.conferenceType,
-          conferencePlace: this.addForm.conferencePlace,
-          conferenceDateList: this.conferenceDateList,
-          estimateNumber: this.addForm.estimateNumber,
+          edaId:this.addForm.edaId,
+          articleTitle: this.addForm.articleTitle,
           indication: this.addForm.indication,
-          sysHospDept: this.addForm.sysHospDept,
-          chairmanList: this.addForm.chairmanList,
-          lecturerList: this.addForm.lecturerList,
-          scheduleList: this.details,
+          talkSkillContent: this.addForm.talkSkillContent,
+          titleImageUrl: this.addForm.titleImageUrl,
+          shareImgUrl: this.addForm.shareImgUrl,
+          articleImgList: this.addForm.articleImgList,
+          edaLiteratureList: this.details,
+          edaType: 'dynamic',
         };
-
+        //     edaLiteratureList: JSON.stringify(this.details),
         console.log('userListData=', userListData)
-        let url = '/web/v1.0/conference/conference/conference-save'
+        let url = '/web/v1.0/academic/eda/eda-save'
         api.postn(url, {}, userListData).then(response => {
           console.log('response=', response)
           this.loading = false
@@ -840,23 +1025,25 @@
               this.editDialogFormVisible = false;
 
               this.initList();
-              this.addForm.conferenceName = ''
-              this.addForm.conferenceType = ''
-              this.addForm.conferencePlace = ''
-              this.conferenceDateList = []
-              this.addForm.estimateNumber = ''
+              this.addForm.edaId = ''
+              this.addForm.articleTitle = ''
               this.addForm.indication = ''
-              this.addForm.sysHospDept = ''
-              this.addForm.chairmanList = ''
-              this.addForm.lecturerList = ''
-              this.addForm.addconferenceTypeName = ''
-              this.addForm.indicationName = ''
-              this.details = [{
-                scheduleId: null,
-                scheduleDateList:[],//开始结束
-                scheduleType: null,
-                schedulePerson: null
-              }]
+              this.addForm.talkSkillContent = ''
+              this.addForm.titleImageUrl = ''
+              this.addForm.articleImgList = []
+              this.addForm.shareImgUrl = ''
+              this.details = []
+              let  detailsNew =
+                {
+                  literatureId: null,
+                  url: null,
+                  literatureName: null,
+                  urlArray:[]
+                }
+
+              this.details.push(detailsNew);
+              this.contentImageUrlArray = []
+
             } else {
               this.$message({
                 message: response.message,
@@ -877,77 +1064,161 @@
         console.log('111')
 
         this.addDialogFormVisible = false
-        this.addForm.conferenceName = ''
-        this.addForm.conferenceType = ''
-        this.addForm.conferencePlace = ''
-        this.conferenceDateList = []
-        this.addForm.estimateNumber = ''
+        this.addForm.edaId = ''
+        this.addForm.articleTitle = ''
         this.addForm.indication = ''
-        this.addForm.sysHospDept = ''
-        this.addForm.chairmanList = ''
-        this.addForm.lecturerList = ''
-        this.addForm.addconferenceTypeName = ''
-        this.addForm.indicationName = ''
-        this.details = [{
-          scheduleId: null,
-          scheduleDateList:[],//开始结束
-          scheduleType: null,
-          schedulePerson: null
-        }]
+        this.addForm.talkSkillContent = ''
+        this.addForm.titleImageUrl = ''
+        this.addForm.articleImgList = []
+        this.addForm.shareImgUrl = ''
+        this.details = []
+        this.contentImageUrlArray = []
+        this.posterImageUrlArray = []
+        this.coverImageUrlArray = []
+        this.details = []
+        let  detailsNew =
+          {
+            literatureId: null,
+            url: null,
+            literatureName: null,
+            urlArray:[]
+          }
 
+        this.details.push(detailsNew);
       },
       // 取消编辑弹窗
       editDialogFormVisibleTap() {
         console.log('111')
+        this.addDialogFormVisible = false
         this.editDialogFormVisible = false
-        this.addForm.conferenceName = ''
-        this.addForm.conferenceType = ''
-        this.addForm.conferencePlace = ''
-        this.conferenceDateList = []
-        this.addForm.estimateNumber = ''
+        this.addDialogFormVisible = false
+        this.addForm.edaId = ''
+        this.addForm.articleTitle = ''
         this.addForm.indication = ''
-        this.addForm.sysHospDept = ''
-        this.addForm.chairmanList = ''
-        this.addForm.lecturerList = ''
-        this.addForm.addconferenceTypeName = ''
-        this.addForm.indicationName = ''
-        this.addForm.conferenceId = null
-        this.details = [{
-          scheduleId: null,
-          scheduleDateList:[],//开始结束
-          scheduleType: null,
-          schedulePerson: null
-        }]
+        this.addForm.indicationName= ''
+        this.addForm.talkSkillContent = ''
+        this.addForm.titleImageUrl = ''
+        this.addForm.articleImgList = []
+        this.addForm.shareImgUrl = ''
+        this.details = []
+        this.contentImageUrlArray = []
+        this.posterImageUrlArray = []
+        this.coverImageUrlArray = []
+        this.details = []
+        let  detailsNew =
+          {
+            literatureId: null,
+            url: null,
+            literatureName: null,
+            urlArray:[]
+          }
+
+        this.details.push(detailsNew);
 
       },
+      // 取消查看
+      LookDialogFormVisibleTap() {
+        console.log('111')
+        this.LookDialogFormVisible = false
+      },
+      // 显示查看
+      LookEditDialog(row, type) {
+        console.log(row)
+        // 跳转至订单列表页面传参
+        this.$router.push({
+          path: '/ToView',
+          query: {
+            id: row.liveId,
+          }
+        }) // 带参跳转
 
+
+      },
       // 显示编辑用户对话框
       showEditDialog(row, type) {
         console.log(row)
         this.editDialogFormVisible = true
         this.loading = true
-        let userListData = {
-          conferenceId: row.conferenceId
+        this.posterEd = {
+          edaId:row.staticEdaId
         }
-        let url = '/web/v1.0/conference/conference/conference-info'
+        let userListData = {
+          edaId: row.staticEdaId
+        }
+        let url = '/web/v1.0/academic/eda/eda-info'
         api.get(url, userListData).then(response => {
           console.log('信息!', response)
           this.loading = false
           if (response.code == '200') {
             if (response.status == 'success') {
-              let conferenceInfo = response.data.conferenceInfo
-              this.initList();
-              this.addForm.conferenceName = conferenceInfo.conferenceName
-              this.addForm.conferenceType = conferenceInfo.conferenceType
-              this.addForm.conferencePlace = conferenceInfo.conferencePlace
-              this.conferenceDateList = conferenceInfo.conferenceDateList
-              this.addForm.estimateNumber = conferenceInfo.estimateNumber
-              this.addForm.indication = conferenceInfo.indication
-              this.addForm.sysHospDept = conferenceInfo.sysHospDept
-              this.addForm.chairmanList = conferenceInfo.chairmanList
-              this.addForm.lecturerList = conferenceInfo.lecturerList
-              this.details = conferenceInfo.scheduleList
-              this.addForm.conferenceId = conferenceInfo.conferenceId
+              let edaInfo = response.data.edaInfo
+              // this.initList();
+              // let list = [];
+              // for (let i = 0; i < liveInfo.lecturerList.length; i++) {
+              //   list.push(liveInfo.lecturerList[i].lecturerId)
+              //   if(i == liveInfo.lecturerList.length - 1){
+              //     this.addForm.lecturerIdList = list
+              //   }
+              //
+              // }
+              console.log('this.indicationList=!', this.indicationList)
+
+              for (let i = 0; i < this.indicationList.length; i++) {
+                if(this.indicationList[i].dictCode == edaInfo.indication){
+                  this.addForm.indicationName = this.indicationList[i].dictName
+                }
+              }
+
+              this.addForm.articleImgList = edaInfo.articleImgList
+              this.addForm.articleTitle = edaInfo.articleTitle
+              this.addForm.indication = edaInfo.indication
+              this.addForm.edaId = edaInfo.edaId
+              this.addForm.shareImgUrl = edaInfo.shareImgUrl
+              this.addForm.talkSkillContent = edaInfo.talkSkillContent
+              this.addForm.titleImageUrl = edaInfo.titleImageUrl
+
+              for (let i = 0; i < edaInfo.articleImgList.length; i++) {
+                let contePath = {
+                  'url': ''
+                }
+                contePath.url = edaInfo.articleImgList[i].imgUrl
+                this.contentImageUrlArray.push(contePath)
+              }
+              console.log('edaInfo.edaLiteratureList!', edaInfo.edaLiteratureList)
+
+              if(edaInfo.edaLiteratureList.length != 0){
+                for (let i = 0; i < edaInfo.edaLiteratureList.length; i++) {
+                  let contePath = {
+                    'url': ''
+                  }
+                  edaInfo.edaLiteratureList[i].urlArray = [];
+                  contePath.url = edaInfo.edaLiteratureList[i].url;
+                  console.log('contePath!',contePath)
+                  console.log('edaInfo.edaLiteratureList!',edaInfo.edaLiteratureList)
+                  edaInfo.edaLiteratureList[i].urlArray.push(contePath)
+                  console.log('edaInfo.edaLiteratureList!',edaInfo.edaLiteratureList)
+                }
+              }
+              this.details = edaInfo.edaLiteratureList
+
+              console.log('this.details!', this.details)
+
+              // contentImageUrlArray: [],
+              //   wenxianImageUrlArray:[],
+              if(edaInfo.titleImageUrl != null && edaInfo.titleImageUrl != ''){
+                let liveImgPosterPath = {
+                  'url': edaInfo.titleImageUrl
+                }
+                this.posterImageUrlArray.push(liveImgPosterPath)
+              }
+              //
+              if(edaInfo.shareImgUrl != null && edaInfo.shareImgUrl != ''){
+                let liveImgCoverPath = {
+                  'url': edaInfo.shareImgUrl
+                }
+                this.coverImageUrlArray.push(liveImgCoverPath)
+              }
+
             } else {
               this.$message({
                 message: response.message,
@@ -969,6 +1240,7 @@
   }
 </script>
 <style lang="scss" scoped>
+
   .el-dialog {
     top: 35% !important;
   }
@@ -1132,6 +1404,28 @@
 </style>
 
 <style>
+  /*// 上传图片框样式*/
+  .avatar{
+    width: 80px;
+    height: 80px;
+  }
+  .lin{
+    line-height: 80px;
+    color: #26C0E4;
+  }
+  .el-upload--picture-card i{
+    line-height: 80px!important;
+    margin-bottom: 20px!important;
+    padding-bottom: 50px!important;
+  }
+  .el-upload-list--picture-card .el-upload-list__item {
+    width: 80px!important;
+    height: 80px!important;
+  }
+  .el-upload--picture-card {
+    width: 80px!important;
+    height: 80px!important;
+  }
   .el-button--primary {
     color: #fff;
     background-color: #26C0E4 !important;

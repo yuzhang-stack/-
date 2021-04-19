@@ -7,7 +7,7 @@ import {getToken, removeToken} from '@/utils/auth'
 // create an axios instance
 const serviceNew = axios.create({
   baseURL: 'https://yifangweb.insightin.cn', // url = base url + request url
-  // baseURL: 'http://172.16.0.211:8099', // url = base url + request url
+  // baseURL: 'http://172.16.0.160:8099', // url = base url + request url
   // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 10000 // request timeout
