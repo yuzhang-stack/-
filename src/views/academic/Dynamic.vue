@@ -75,7 +75,7 @@
         prop="articleDate"
         label="上传时间"
         align="center"
-        width="150">
+        width="180">
       </el-table-column>
       <el-table-column
         prop="talkSkillContent"

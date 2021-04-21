@@ -1,7 +1,6 @@
 <template>
   <div class="user">
     <!--    <div style="padding: 20px">正在研发...</div>-->
-
     <el-row>
       <el-col :span="24" style="margin-top: 20px;">
         <el-input style="margin-left: 1%;width: 8%" placeholder="标题查询" class="search-input"
@@ -17,10 +16,8 @@
             :style="'width:100%;'"
             @click.native="indicatTap(index)"></el-option>
         </el-select>
-
         <el-select style="margin-left: 1%;width: 8%" v-model="liveStatus" filterable @clear="liveStatusNull" clearable
                    placeholder="状态查询" @change="">
-
           <el-option
             v-for="(item,index) in liveStatusList"
             :key="item"
@@ -29,8 +26,6 @@
             :style="'width:100%;'"
             @click.native="liveStatusTap(index)"></el-option>
         </el-select>
-
-
         <el-button type="primary" style="margin-left: 1%;" @click="ChaxunTap">查询</el-button>
         <el-button type="primary" @click="addDialogFormVisible=true">创建</el-button>
         <el-button style="margin-left: 1%;" type="primary" @click="ChongzhiTap">重置</el-button>
@@ -52,7 +47,7 @@
       </el-table-column>
       <el-table-column
         prop="articleTitle"
-        label="学术标题"
+        label="文献标题"
         align="center"
         width="500">
       </el-table-column>
@@ -98,7 +93,7 @@
       </el-pagination>
     </div>
     <!--创建会议对话框:-->
-    <el-dialog  title="创建幻灯" :visible.sync="addDialogFormVisible" @close="addDialogFormVisibleTap">
+    <el-dialog  title="创建文献" :visible.sync="addDialogFormVisible" @close="addDialogFormVisibleTap">
       <el-form :model="addForm" style=" width: 100%;overflow:auto;height: 550px;" label-width="80px" ref="addUserForm">
         <el-form-item label="标题" prop="liveName">
           <el-input v-model="addForm.articleTitle" auto-complete="off"></el-input>
@@ -172,14 +167,13 @@
           </el-dialog>
         </el-form-item>
       </el-form>
-
       <div style="margin: 0 auto!important;text-align: center" class="dialog-footer">
         <el-button @click="addDialogFormVisibleTap">取 消</el-button>
         <el-button type="primary" @click="addUserSubmit()">保存</el-button>
       </div>
     </el-dialog>
     <!-- 编辑用户对话框 -->
-    <el-dialog title="编辑幻灯" :visible.sync="editDialogFormVisible" @close='editDialogFormVisibleTap'>
+    <el-dialog title="编辑文献" :visible.sync="editDialogFormVisible" @close='editDialogFormVisibleTap'>
       <el-form :model="addForm" style=" width: 100%;overflow:auto;height: 550px;" label-width="80px" ref="addUserForm">
         <el-form-item label="标题" prop="liveName">
           <el-input v-model="addForm.articleTitle" auto-complete="off"></el-input>
@@ -195,7 +189,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="学术内容" prop="initiator">
+        <el-form-item label="文献内容" prop="initiator">
           <el-upload
             :action="academic"
             list-type="picture-card"
@@ -280,8 +274,6 @@
     data() {
       let that = this;
       return {
-        liveViewList:[],//直播观看人数列表
-        // "http://yifang.insightin.cn/live_img/poster/1615184721566/4fc3222f0ef00c0a1e08794ef682abc.jpg"
         contentImageUrlArray: [],
         wenxianImageUrlArray:[],
         posterImageUrlArray: [],
@@ -295,9 +287,7 @@
         cover:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=slide_show',//封面
         meet:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=slide_show',//会议介绍
         expert:'https://yifangweb.insightin.cn//web/v1.0/common/academic-img-upload?academicType=slide_show',//专家介绍
-
         posterEd:'',//上传图片带参
-
         doctorListVal: [],//参会主席列表
         liveDateList:[],//会议时间
         value1: [],
@@ -305,7 +295,6 @@
           disabledDate(time) { //开始时间的禁用
             if (that.liveDateEnd != null) {
               return time.getTime() > new Date(that.liveDateEnd).getTime();
-
             }
           }
         },
@@ -339,9 +328,8 @@
         pagesize: 10,
         pagenum: 1,
         addDialogFormVisible: false,
-
         addForm: {
-          slideShowId: null,//id
+          literatureId: null,//id
           articleTitle: '',//名称
           indication: '',//适应症(三方会特有)(字典)
           indicationName:'',
@@ -386,7 +374,7 @@
     },
     methods: {
 
-      // 内容成功返回结果
+      // 文献内容成功返回结果
       contentSuccess(file) {
         console.log('file=',file);
         if (file.code == '200') {
@@ -414,7 +402,7 @@
         }
 
       },
-      // 内容删除
+      // 文献内容删除
       contentRemove(res,file) {
         console.log('res=',res);
         // console.log('res=',res.response.data.fileFullPath);
@@ -429,26 +417,23 @@
         }
         console.log('articleImgList=',this.addForm.articleImgList);
       },
-      // 内容预览图片
+      // 文献内容预览图片
       contentPreview(file) {
         this.dialogImageUrl = file.url;
         this.dialogVisible = true;
         console.log('1111=',file);
       },
-      // 内容超出数量提醒
+      // 文献内容超出数量提醒
       contentExceed() {
         this.$message({
           message: '超过数量限制',
           type: 'error'
         })
       },
-
-
       // 卡片封面删
       coverRemove(file, fileList) {
         this.addForm.shareImgUrl = '';
       },
-
       // 卡片封面超出数量提醒
       coverExceed() {
         this.$message({
@@ -456,7 +441,6 @@
           type: 'error'
         })
       },
-
       // 卡片封面预览图片
       coverPreview(file) {
         this.dialogImageUrl = file.url;
@@ -485,8 +469,6 @@
         }
 
       },
-
-
       // 封面删除
       posterRemove(file, fileList) {
         this.addForm.titleImageUrl = '';
@@ -527,7 +509,6 @@
         }
 
       },
-
       // 改变用户状态
       changeUserState(row) {
         console.log(row)
@@ -535,12 +516,12 @@
         let userListData = {}
 
         userListData = qs.stringify({
-          slideShowId:row.slideShowId
+          literatureId:row.literatureId
         });
 
         // userListData.push(row.userId)
         console.log('userListData=', userListData)
-        let url = '/web/v1.0/academic/slide-show/slide-show-status-change'
+        let url = '/web/v1.0/academic/literature/literature-status-change'
         api.post(url, {}, userListData).then(response => {
           this.loading = false
           if (response.code == '200') {
@@ -585,38 +566,6 @@
       change2: function () {
         console.log('liveDateEnd=', this.liveDateEnd)
         this.userListData.liveDateEnd = this.liveDateEnd;
-      },
-      // 三方会主席字典项
-      thirdTap() {
-        this.loading = true
-        let userListData = {};
-        console.log('userListData=', userListData)
-        let url = '/web/v1.0/conference/conference/third-doctor-select'
-        api.get(url, userListData).then(response => {
-          // console.log('返回值!', response.data.userList.item)
-          this.loading = false
-          if (response.code == '200') {
-            if (response.status == 'success') {
-              let doctorListVal = response.data.doctorList
-              this.doctorListVal = doctorListVal
-            } else {
-              this.$message({
-                message: response.message,
-                type: 'error'
-              })
-            }
-          } else {
-            this.$message({
-              message: response.message,
-              type: 'error'
-            })
-          }
-
-
-        }).catch(error => {
-
-        })
-
       },
       // 适应症字典项
       indicationTap() {
@@ -668,49 +617,13 @@
         this.indicationName = this.indicationList[index].dictName
 
       },
-      // 三方会类型字典项
-      SanfangTypeTap() {
-        this.loading = true
-        let userListData = {};
-        console.log('userListData=', userListData)
-        let url = '/web/v1.0/conference/conference/third-conference-type-select'
-        api.get(url, userListData).then(response => {
-          // console.log('返回值!', response.data.userList.item)
-          this.loading = false
-          if (response.code == '200') {
-            if (response.status == 'success') {
-              let conferenceTypeList = response.data.conferenceTypeList
-              this.conferenceTypeList = conferenceTypeList
-            } else {
-              this.$message({
-                message: response.message,
-                type: 'error'
-              })
-            }
-          } else {
-            this.$message({
-              message: response.message,
-              type: 'error'
-            })
-          }
-
-
-        }).catch(error => {
-
-        })
-
-      },
-      // 清空三方会类型
+      // 清空
       liveStatusNull(val) {
         this.userListData.status = '';
       },
-      // 清空三方会类型
+      // 清空
       indicationNull(val) {
         this.addForm.indication = '';
-      },
-      // 清空三方会类型
-      departmentNull(val) {
-        this.addForm.department = '';
       },
       // 三方会类型查询
       conferenceTap(index) {
@@ -733,15 +646,6 @@
         console.log('适应症类型名称 =', this.addForm.indicationName)
 
       },
-      // 三方会类型添加
-      addconferenceTypeTap(index) {
-        this.addForm.conferenceType = this.conferenceTypeList[index].dictCode
-        this.addForm.addconferenceTypeName = this.conferenceTypeList[index].dictName
-
-        console.log('添加选择类型 =', this.addForm.conferenceType)
-        console.log('添加选择类型名称 =', this.addForm.addconferenceTypeName)
-
-      },
       // 设置每页条数
       handleSizeChange(val) {
         console.log(`每页 ${val} 条`)
@@ -758,7 +662,6 @@
         this.userListData.currentPage = val
         this.initList()
       },
-
       // 初始化表格数据
       initList() {
         this.loading = true
@@ -773,15 +676,15 @@
         userListData = this.userListData
 
         console.log('userListData=', userListData)
-        let url = '/web/v1.0/academic/slide-show/slide-show-page'
+        let url = '/web/v1.0/academic/literature/literature-page'
         api.get(url, userListData).then(response => {
           // console.log('返回值!', response.data.userList.item)
           this.loading = false
           if (response.code == '200') {
             if (response.status == 'success') {
-              let list = response.data.slideShowList.items
-              this.totalCount = response.data.slideShowList.totalCount
-              this.total = response.data.slideShowList.totalCount
+              let list = response.data.literatureList.items
+              this.totalCount = response.data.literatureList.totalCount
+              this.total = response.data.literatureList.totalCount
               this.userList = list
             } else {
               this.$message({
@@ -803,8 +706,7 @@
 
       },
       // 添加用户
-      43() {
-
+      addUserSubmit() {
         this.paginaSel = 0
         // return
         console.log('this.addForm=', this.addForm)
@@ -817,7 +719,7 @@
           return false
         }
         if (this.addForm.articleImgList.length == 0) {
-          this.$message('请选择文章内容');
+          this.$message('请选择文献内容');
           return
         }
         if (!this.addForm.titleImageUrl) {
@@ -832,7 +734,7 @@
         this.loading = true
         let userListData = {};
         userListData = {
-          slideShowId:this.addForm.slideShowId,
+          literatureId:this.addForm.literatureId,
           articleTitle: this.addForm.articleTitle,
           indication: this.addForm.indication,
           titleImageUrl: this.addForm.titleImageUrl,
@@ -840,17 +742,16 @@
           articleImgList: this.addForm.articleImgList,
         };
         console.log('userListData=', userListData)
-        let url = '/web/v1.0/academic/slide-show/slide-show-save'
+        let url = '/web/v1.0/academic/literature/literature-save'
         api.postn(url, {}, userListData).then(response => {
           console.log('response=', response)
           this.loading = false
-
           if (response.code == '200') {
             if (response.status == 'success') {
               this.addDialogFormVisible = false;
               this.editDialogFormVisible = false;
               this.initList();
-              this.addForm.slideShowId = ''
+              this.addForm.literatureId = ''
               this.addForm.articleTitle = ''
               this.addForm.indication = ''
               this.addForm.titleImageUrl = ''
@@ -895,7 +796,7 @@
         this.addDialogFormVisible = false
         this.editDialogFormVisible = false
         this.addDialogFormVisible = false
-        this.addForm.slideShowId = ''
+        this.addForm.literatureId = ''
         this.addForm.articleTitle = ''
         this.addForm.indication = ''
         this.addForm.indicationName= ''
@@ -909,75 +810,57 @@
 
 
       },
-      // 取消查看
-      LookDialogFormVisibleTap() {
-        console.log('111')
-        this.LookDialogFormVisible = false
-      },
-      // 显示查看
-      LookEditDialog(row, type) {
-        console.log(row)
-        // 跳转至订单列表页面传参
-        this.$router.push({
-          path: '/ToView',
-          query: {
-            id: row.liveId,
-          }
-        }) // 带参跳转
-
-
-      },
-      // 显示编辑用户对话框
+      // 查看编辑
       showEditDialog(row, type) {
         console.log(row)
         this.editDialogFormVisible = true
         this.loading = true
         this.posterEd = {
-          slideShowId:row.slideShowId
+          literatureId:row.literatureId
         }
         let userListData = {
-          slideShowId: row.slideShowId
+          literatureId: row.literatureId
         }
-        let url = '/web/v1.0/academic/slide-show/slide-show-info'
+        let url = '/web/v1.0/academic/literature/literature-info'
         api.get(url, userListData).then(response => {
           console.log('信息!', response)
           this.loading = false
           if (response.code == '200') {
             if (response.status == 'success') {
-              let slideShowInfo = response.data.slideShowInfo
+              let literatureInfo = response.data.literatureInfo
 
               console.log('this.indicationList=!', this.indicationList)
 
               for (let i = 0; i < this.indicationList.length; i++) {
-                if(this.indicationList[i].dictCode == slideShowInfo.indication){
+                if(this.indicationList[i].dictCode == literatureInfo.indication){
                   this.addForm.indicationName = this.indicationList[i].dictName
                 }
               }
 
-              this.addForm.articleImgList = slideShowInfo.articleImgList
-              this.addForm.articleTitle = slideShowInfo.articleTitle
-              this.addForm.indication = slideShowInfo.indication
-              this.addForm.slideShowId = slideShowInfo.slideShowId
-              this.addForm.shareImgUrl = slideShowInfo.shareImgUrl
-              this.addForm.titleImageUrl = slideShowInfo.titleImageUrl
+              this.addForm.articleImgList = literatureInfo.articleImgList
+              this.addForm.articleTitle = literatureInfo.articleTitle
+              this.addForm.indication = literatureInfo.indication
+              this.addForm.literatureId = literatureInfo.literatureId
+              this.addForm.shareImgUrl = literatureInfo.shareImgUrl
+              this.addForm.titleImageUrl = literatureInfo.titleImageUrl
 
-              for (let i = 0; i < slideShowInfo.articleImgList.length; i++) {
+              for (let i = 0; i < literatureInfo.articleImgList.length; i++) {
                 let contePath = {
                   'url': ''
                 }
-                contePath.url = slideShowInfo.articleImgList[i].imgUrl
+                contePath.url = literatureInfo.articleImgList[i].imgUrl
                 this.contentImageUrlArray.push(contePath)
               }
-              if(slideShowInfo.titleImageUrl != null && slideShowInfo.titleImageUrl != ''){
+              if(literatureInfo.titleImageUrl != null && literatureInfo.titleImageUrl != ''){
                 let liveImgPosterPath = {
-                  'url': slideShowInfo.titleImageUrl
+                  'url': literatureInfo.titleImageUrl
                 }
                 this.posterImageUrlArray.push(liveImgPosterPath)
               }
               //
-              if(slideShowInfo.shareImgUrl != null && slideShowInfo.shareImgUrl != ''){
+              if(literatureInfo.shareImgUrl != null && literatureInfo.shareImgUrl != ''){
                 let liveImgCoverPath = {
-                  'url': slideShowInfo.shareImgUrl
+                  'url': literatureInfo.shareImgUrl
                 }
                 this.coverImageUrlArray.push(liveImgCoverPath)
               }
@@ -1167,7 +1050,6 @@
     }
   }
 </style>
-
 <style>
   /*// 上传图片框样式*/
   .avatar{

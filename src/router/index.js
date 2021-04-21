@@ -199,10 +199,17 @@ export const asyncRoutes = [
       },
       {
         // path: 'edit/:id(\\d+)',
-        path: '/academic',
-        component: () => import('@/views/academic/academic'),
+        path: '/academicMan',
+        component: () => import('@/views/academic/academicMan'),
         name: '学术幻灯管理',
         meta: { title: '学术幻灯管理',  },
+      },
+      {
+        // path: 'edit/:id(\\d+)',
+        path: '/literature',
+        component: () => import('@/views/academic/literature'),
+        name: '文献管理',
+        meta: { title: '文献管理',  },
       },
     ]
   },
