@@ -563,7 +563,6 @@
       },
       // 结束时间
       change2: function () {
-        console.log('liveDateEnd=', this.liveDateEnd)
         this.userListData.liveDateEnd = this.liveDateEnd;
       },
       // 适应症字典项
@@ -634,16 +633,11 @@
       liveStatusTap(index) {
         console.log('区域下标=', index)
         this.userListData.status = this.liveStatusList[index]
-        // this.conferenceTypeName = this.conferenceTypeList[index].dictName
       },
       // 适应症类型添加
       addindicationListTap(index) {
         this.addForm.indication = this.indicationList[index].dictCode
         this.addForm.indicationName = this.indicationList[index].dictName
-
-        console.log('适应症类型 =', this.addForm.indication)
-        console.log('适应症类型名称 =', this.addForm.indicationName)
-
       },
       // 设置每页条数
       handleSizeChange(val) {
