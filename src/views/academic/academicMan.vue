@@ -1,6 +1,6 @@
 <template>
   <div class="user">
-    <!--    <div style="padding: 20px">正在研发...</div>-->
+    <!--    <div style="padding: 20px">正在研发...123</div>-->
     <el-row>
       <el-col :span="24" style="margin-top: 20px;">
         <el-input style="margin-left: 1%;width: 8%" placeholder="标题查询" class="search-input"
@@ -373,7 +373,6 @@
       this.indicationTap()//三适应症字典项
     },
     methods: {
-
       // 幻灯内容成功返回结果
       contentSuccess(file) {
         console.log('file=',file);
@@ -812,7 +811,6 @@
 
 
       },
-
       // 查看编辑
       showEditDialog(row, type) {
         console.log(row)
